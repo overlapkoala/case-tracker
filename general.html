@@ -216,7 +216,7 @@ async function checkPw(){
   var v=document.getElementById('pw-input').value;
   var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
   var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-  if(hex==='2d0ac88c9aea56f67f1dcab484cd301d589cc7cdfd35d4a7cdaea21b295ba268'){
+  if(hex==='07334386287751ba02a4588c1a0875dbd074a61bd9e6ab7c48d244eacd0c99e0'){
     sessionStorage.setItem('case_auth','1');
     document.getElementById('pw-overlay').remove();
   }else{
