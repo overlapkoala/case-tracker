@@ -297,49 +297,7 @@
   </style>
 </head>
 <body>
-<style>
-#pw-overlay{position:fixed;inset:0;background:#1a1a2e;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:sans-serif}
-#pw-box{background:#fff;border-radius:12px;padding:40px 36px;text-align:center;width:320px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
-#pw-box h2{margin:0 0 8px;color:#1a1a2e;font-size:1.3rem}
-#pw-box p{color:#666;font-size:.9rem;margin:0 0 24px}
-#pw-input{width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none}
-#pw-input:focus{border-color:#4a90d9}
-#pw-btn{margin-top:12px;width:100%;padding:11px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}
-#pw-btn:hover{background:#2d2d5e}
-#pw-err{color:#e74c3c;font-size:.85rem;margin-top:8px;min-height:20px}
-</style>
-<div id="pw-overlay">
-  <div id="pw-box">
-    <h2>⚖️ 律師事務所</h2>
-    <p>案件追蹤系統・請輸入密碼</p>
-    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key===&apos;Enter&apos;)checkPw()">
-    <button id="pw-btn" onclick="checkPw()">進入</button>
-    <div id="pw-err"></div>
-  </div>
-</div>
-<script>
-(function(){
-  if(sessionStorage.getItem('case_auth')==='1'){
-    document.addEventListener('DOMContentLoaded',function(){
-      var o=document.getElementById('pw-overlay');
-      if(o)o.remove();
-    });
-  }
-})();
-async function checkPw(){
-  var v=document.getElementById('pw-input').value;
-  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
-  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-  if(hex==='07334386287751ba02a4588c1a0875dbd074a61bd9e6ab7c48d244eacd0c99e0'){
-    sessionStorage.setItem('case_auth','1');
-    document.getElementById('pw-overlay').remove();
-  }else{
-    document.getElementById('pw-err').textContent='密碼錯誤，請再試一次';
-    document.getElementById('pw-input').value='';
-    document.getElementById('pw-input').focus();
-  }
-}
-</script>
+<style>#pw-overlay{position:fixed;inset:0;background:#1a1a2e;z-index:99999;display:flex;align-items:center;justify-content:center}#pw-box{background:#fff;border-radius:12px;padding:40px 36px;text-align:center;width:320px}#pw-input{width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem}#pw-btn{margin-top:12px;width:100%;padding:11px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;cursor:pointer}#pw-err{color:#e74c3c;font-size:.85rem;margin-top:8px;min-height:20px}</style><div id="pw-overlay"><div id="pw-box"><h2>⚖️ 律師事務所</h2><p>案件追蹤系統・請輸入密碼</p><input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()"><button id="pw-btn" onclick="checkPw()">進入</button><div id="pw-err"></div></div></div><script>(function(){if(sessionStorage.getItem('case_auth')==='1'){document.addEventListener('DOMContentLoaded',function(){var o=document.getElementById('pw-overlay');if(o)o.remove();});}})();async function checkPw(){var v=document.getElementById('pw-input').value;var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');if(hex==='07334386287751ba02a4588c1a0875dbd074a61bd9e6ab7c48d244eacd0c99e0'){sessionStorage.setItem('case_auth','1');document.getElementById('pw-overlay').remove();}else{document.getElementById('pw-err').textContent='密碼錯誤，請再試一次';document.getElementById('pw-input').value='';document.getElementById('pw-input').focus();}}</script>
 
 
 <header>
@@ -407,8 +365,8 @@ async function checkPw(){
         <ul class="issue-list">
           <li>
             <div class="issue-name">楊昕如 ⚠️</div>
-            <div class="issue-desc">6/26前補件到彰化地院（115年度司執消債更字第62號）：①提出壽險公會查詢結果表 ②預納更生執行費 3,000元（便利商店或合庫銀行繳款，繳費單截止6/26）</div>
-            <div class="issue-action" style="background:#fdedec;color:#c0392b;">⚠️ 6/26截止</div>
+            <div class="issue-desc">7/8前補件到彰化地院（115年度司執消債更字第62號）：①提出壽險公會查詢結果表 ②預納更生執行費 3,000元（注意：繳費單有效期限6/26，建議盡早繳費或向法院申請新繳費單）</div>
+            <div class="issue-action" style="background:#fdedec;color:#c0392b;">⚠️ 7/8截止</div>
           </li>
         </ul>
       </div>
@@ -542,8 +500,8 @@ async function checkPw(){
             <td><strong>楊昕如</strong></td>
             <td><span class="badge b-warn">⚠️ 補件中</span></td>
             <td>更生裁定開始通知（115/6/22收）</td>
-            <td class="next-step">⚠️ 6/26前：①提出壽險公會查詢結果表 ②預納更生執行費3,000元到彰化地院（115年度司執消債更字第62號）</td>
-            <td class="note-ok">彰化地院115/6/3裁定更生程序開始；115/6/12法院函要求15日內補件，截止6/26</td>
+            <td class="next-step">⚠️ 7/8前：①提出壽險公會查詢結果表 ②預納更生執行費3,000元到彰化地院（115年度司執消債更字第62號）；繳費單有效至6/26，建議盡早繳費</td>
+            <td class="note-ok">彰化地院115/6/3裁定更生程序開始；115/6/12法院函要求文到15日內補件；事務所6/22收文，截止7/8</td>
           </tr>
           <tr>
             <td><strong>盧立偉</strong></td>
