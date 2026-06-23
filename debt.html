@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>債清案件追蹤表</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      font-size: 15px;
+    }
+
+    /* ── 頂部 ── */
+    header {
+      background: linear-gradient(135deg, #1a3a5c, #2d6a9f);
+      color: white;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+    header .meta { font-size: 13px; opacity: .8; margin-top: 4px; }
+    .stats {
+      display: flex; gap: 20px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,.15);
+      border-radius: 10px;
+      padding: 10px 18px;
+      text-align: center;
+      min-width: 80px;
+    }
+    .stat-box .num { font-size: 26px; font-weight: 700; }
+    .stat-box .lbl { font-size: 12px; opacity: .85; }
+
+    /* ── 主內容區 ── */
+    main { max-width: 1300px; margin: 0 auto; padding: 24px 20px; }
+
+    /* ── 卡片 ── */
+    .card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 22px;
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .card-header.red    { background: #fff5f5; color: #c0392b; border-color: #fdd; }
+    .card-header.orange { background: #fff8f0; color: #d35400; border-color: #fde8cc; }
+    .card-header.blue   { background: #f0f6ff; color: #1a5a9a; border-color: #d0e4f7; }
+    .card-header.green  { background: #f0fff4; color: #27ae60; border-color: #d0f0dc; }
+    .card-header.gray   { background: #f7f7f7; color: #555;    border-color: #e8e8e8; }
+    .card-body { padding: 18px 22px; }
+
+    /* ── 緊急提醒條 ── */
+    .alert-bar {
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+      color: white;
+      padding: 14px 22px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(231,76,60,.3); }
+      50%      { box-shadow: 0 0 0 8px rgba(231,76,60,0); }
+    }
+
+    /* ── 問題清單 ── */
+    .issue-list { list-style: none; }
+    .issue-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .issue-list li:last-child { border-bottom: none; }
+    .issue-num {
+      background: #e74c3c;
+      color: white;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    }
+    .issue-name {
+      font-weight: 700;
+      color: #c0392b;
+      min-width: 60px;
+    }
+    .issue-desc { color: #555; flex: 1; }
+    .issue-action {
+      font-size: 13px;
+      background: #fff0f0;
+      color: #c0392b;
+      border-radius: 6px;
+      padding: 3px 10px;
+      flex-shrink: 0;
+    }
+
+    /* ── 陳報表 ── */
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .report-card {
+      border: 1.5px solid #dce8f7;
+      border-radius: 10px;
+      padding: 12px 14px;
+      background: #f8fbff;
+    }
+    .report-card .name {
+      font-weight: 700;
+      font-size: 15px;
+      color: #1a5a9a;
+      margin-bottom: 6px;
+    }
+    .report-card .info {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+    .report-card .tag {
+      display: inline-block;
+      background: #2d6a9f;
+      color: white;
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    .report-card.warn { border-color: #f0b429; background: #fffbf0; }
+    .report-card.warn .name { color: #b7770d; }
+    .report-card.warn .tag { background: #f0b429; color: #333; }
+
+    /* ── 全案件表格 ── */
+    .case-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .case-table th {
+      background: #f0f4f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      color: #444;
+      border-bottom: 2px solid #dde3ea;
+      white-space: nowrap;
+    }
+    .case-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .case-table tr:hover td { background: #fafcff; }
+
+    /* 進度標籤 */
+    .badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge.b-deep   { background: #e8f4ea; color: #27ae60; }
+    .badge.b-mid    { background: #e8f0fb; color: #1a5a9a; }
+    .badge.b-early  { background: #eaf4fb; color: #2980b9; }
+    .badge.b-mediate{ background: #fef9e7; color: #d4ac0d; }
+    .badge.b-file   { background: #f0f0f0; color: #777; }
+    .badge.b-approve{ background: #e0f5f2; color: #0e8f7a; }
+    .badge.b-new    { background: #f5eef8; color: #7d3c98; }
+    .badge.b-warn   { background: #fdedec; color: #c0392b; }
+    .badge.b-done   { background: #e8f8f0; color: #1e8449; }
+    .badge.b-special{ background: #fdf2e9; color: #ca6f1e; }
+
+    .next-step { color: #2d6a9f; font-size: 13px; }
+    .note-warn { color: #c0392b; font-size: 12px; font-weight: 600; }
+    .note-ok   { color: #888; font-size: 12px; }
+
+    /* 分組標題列 */
+    .group-row td {
+      background: #f0f4f8;
+      font-weight: 700;
+      color: #445;
+      font-size: 13px;
+      padding: 7px 14px;
+      letter-spacing: .5px;
+    }
+
+    /* ── 已結案 ── */
+    .closed-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .closed-chip {
+      background: #f0f0f0;
+      color: #888;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 14px;
+    }
+
+    /* ── 使用說明 ── */
+    .tip-box {
+      background: #f0f6ff;
+      border-left: 4px solid #2d6a9f;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #444;
+    }
+    .tip-box strong { color: #1a5a9a; }
+
+    /* ── 月份更新日期 ── */
+    .update-badge {
+      display: inline-block;
+      background: #e8f4ea;
+      color: #27ae60;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* ── 開庭提醒 ── */
+    .court-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid #fdd;
+    }
+    .court-item:last-child { border-bottom: none; }
+    .court-date {
+      background: #e74c3c;
+      color: white;
+      border-radius: 10px;
+      padding: 8px 14px;
+      text-align: center;
+      min-width: 80px;
+    }
+    .court-date .day { font-size: 24px; font-weight: 700; line-height: 1; }
+    .court-date .month { font-size: 12px; opacity: .9; }
+    .court-info .cname { font-size: 18px; font-weight: 700; }
+    .court-info .ctype { color: #888; font-size: 13px; margin-top: 3px; }
+    .court-info .caction {
+      display: inline-block;
+      background: #fff0f0;
+      color: #c0392b;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    @media (max-width: 700px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .stats { flex-wrap: wrap; }
+      .case-table { font-size: 13px; }
+      .case-table td, .case-table th { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+<style>
+#pw-overlay{position:fixed;inset:0;background:#1a1a2e;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:sans-serif}
+#pw-box{background:#fff;border-radius:12px;padding:40px 36px;text-align:center;width:320px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+#pw-box h2{margin:0 0 8px;color:#1a1a2e;font-size:1.3rem}
+#pw-box p{color:#666;font-size:.9rem;margin:0 0 24px}
+#pw-input{width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none}
+#pw-input:focus{border-color:#4a90d9}
+#pw-btn{margin-top:12px;width:100%;padding:11px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}
+#pw-btn:hover{background:#2d2d5e}
+#pw-err{color:#e74c3c;font-size:.85rem;margin-top:8px;min-height:20px}
+</style>
+<div id="pw-overlay">
+  <div id="pw-box">
+    <h2>⚖️ 律師事務所</h2>
+    <p>案件追蹤系統・請輸入密碼</p>
+    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()">
+    <button id="pw-btn" onclick="checkPw()">進入</button>
+    <div id="pw-err"></div>
+  </div>
+</div>
+<script>
+(function(){
+  if(sessionStorage.getItem('case_auth')==='1'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var o=document.getElementById('pw-overlay');
+      if(o)o.remove();
+    });
+  }
+})();
+async function checkPw(){
+  var v=document.getElementById('pw-input').value;
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
+  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(hex==='2d0ac88c9aea56f67f1dcab484cd301d589cc7cdfd35d4a7cdaea21b295ba268'){
+    sessionStorage.setItem('case_auth','1');
+    document.getElementById('pw-overlay').remove();
+  }else{
+    document.getElementById('pw-err').textContent='密碼錯誤，請再試一次';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+</script>
+
+
+<header>
+  <div>
+    <h1>⚖️ 債清案件追蹤表</h1>
+    <div class="meta">最後更新：2026-06-21　｜　由 Claude 協助管理</div>
+  </div>
+  <div class="stats">
+    <div class="stat-box">
+      <div class="num">24</div>
+      <div class="lbl">進行中</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">31</div>
+      <div class="lbl">已結案</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">3</div>
+      <div class="lbl">等待回覆</div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── 即將到來的開庭 ── -->
+  <div class="card">
+    <div class="card-header red">📅 即將到來的開庭 / 期日</div>
+    <div class="card-body">
+      <div class="court-item">
+        <div class="court-date">
+          <div class="day">23</div>
+          <div class="month">6月</div>
+        </div>
+        <div class="court-info">
+          <div class="cname">柯媛齡</div>
+          <div class="ctype">前置調解　｜　下午 3:30　｜　南投地院 調解中心（南投市中興路759號2樓）</div>
+          <div class="caction">出席調解</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 下一步行動 ── -->
+  <div class="card">
+    <div class="card-header orange">🎯 下一步行動</div>
+    <div class="card-body">
+
+      <!-- 等待對方回應 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-weight:700;color:#d35400;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+          🟡 等待對方回應
+          <span style="font-weight:400;font-size:12px;color:#888;"></span>
+        </div>
+        <ul class="issue-list">
+          <li>
+            <div class="issue-name">邱明志</div>
+            <div class="issue-desc">已轉更生聲請，等候法院消息</div>
+            <div class="issue-action" style="background:#f0f6ff;color:#1a5a9a;">等法院消息</div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 全案件狀態 ── -->
+  <div class="card">
+    <div class="card-header blue">📁 全案件狀態總表（24 件進行中）</div>
+    <div class="card-body" style="padding:0;overflow-x:auto;">
+      <table class="case-table">
+        <thead>
+          <tr>
+            <th>當事人</th>
+            <th>目前進度</th>
+            <th>最新文件</th>
+            <th>下一步</th>
+            <th>備註</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 更生/清算程序進行中（最近有動作的排最上面） -->
+          <tr class="group-row"><td colspan="5">▌ 更生 / 清算程序進行中</td></tr>
+          <tr>
+            <td><strong>黃文虹</strong></td>
+            <td><span class="badge b-special">抗告中</span></td>
+            <td>抗告已提（115/6/1）</td>
+            <td class="next-step">等待抗告裁定</td>
+            <td class="note-ok">115/5/22 更生裁定駁回；115/6/1 已提抗告</td>
+          </tr>
+          <tr>
+            <td><strong>洪大欽</strong></td>
+            <td><span class="badge b-mid">更生程序</span></td>
+            <td>陳報(八)（115/6/1）</td>
+            <td class="next-step">陳報(九)</td>
+            <td class="note-ok">115/6/1 陳報(八)已寄出（含新更生方案、教練收入切結書、南山人壽保單說明）</td>
+          </tr>
+          <tr>
+            <td><strong>張妤晴</strong></td>
+            <td><span class="badge b-mid">更生程序</span></td>
+            <td>陳報(五)（115/4/30）</td>
+            <td class="next-step">陳報(六)</td>
+            <td class="note-ok">4/30 截止事項已完成（更生方案＋保單資料＋陳報五）</td>
+          </tr>
+          <tr>
+            <td><strong>莊依靜</strong></td>
+            <td><span class="badge b-mid">更生程序</span></td>
+            <td>陳報(四)</td>
+            <td class="next-step">陳報(五)</td>
+            <td class="note-ok">—</td>
+          </tr>
+          <tr>
+            <td><strong>莊美滿</strong></td>
+            <td><span class="badge b-mid">更生程序</span></td>
+            <td>陳報(三)</td>
+            <td class="next-step">陳報(四)</td>
+            <td class="note-ok">—</td>
+          </tr>
+          <tr>
+            <td><strong>陳炎嘉</strong></td>
+            <td><span class="badge b-mid">更生程序</span></td>
+            <td>債權表（115/6/10）</td>
+            <td class="next-step">陳報(四)</td>
+            <td class="note-ok">115/6/10 收到債權表；確認更生執行費已繳清</td>
+          </tr>
+          <!-- 等待裁定開始（最近有動作的排最上面） -->
+          <tr class="group-row"><td colspan="5">▌ 等待裁定開始</td></tr>
+          <tr>
+            <td><strong>張湘棋</strong></td>
+            <td><span class="badge b-file">等待裁定通過</span></td>
+            <td>補正已遞（115/5/23）</td>
+            <td class="next-step">等待法院回應</td>
+            <td class="note-ok">補正已遞出，已列入台新資產管理、富邦資產管理為相對人</td>
+          </tr>
+          <tr>
+            <td><strong>賴淑貞</strong></td>
+            <td><span class="badge b-file">等待裁定通過</span></td>
+            <td>補正已遞（115/5/12）</td>
+            <td class="next-step">等待法院回應</td>
+            <td class="note-ok">補正已於 5/12 遞出</td>
+          </tr>
+          <tr>
+            <td><strong>連德興</strong></td>
+            <td><span class="badge b-file">等待裁定通過</span></td>
+            <td>陳報(二)＋南投地院函（115/4/27）</td>
+            <td class="next-step">等富邦人壽回覆保單資料</td>
+            <td class="note-ok">法院向富邦人壽查詢保單性質、效力，及115/2/9解約之保單價值準備金，律師收副本</td>
+          </tr>
+          <tr>
+            <td><strong>邱明志</strong></td>
+            <td><span class="badge b-warn">轉更生聲請</span></td>
+            <td>更生聲請狀（115/1/21 後）</td>
+            <td class="next-step">等候法院消息</td>
+            <td class="note-warn">⚠️ 已轉更生聲請，等待法院裁定</td>
+          </tr>
+          <tr>
+            <td><strong>邱知瑩</strong></td>
+            <td><span class="badge b-file">等待裁定通過</span></td>
+            <td>陳報(一)</td>
+            <td class="next-step">等待更生裁定開始</td>
+            <td class="note-ok">調解不成立(115/1/21)</td>
+          </tr>
+          <tr>
+            <td><strong>蔡淑暖</strong></td>
+            <td><span class="badge b-file">等待裁定通過</span></td>
+            <td>陳報(四)</td>
+            <td class="next-step">等待更生裁定開始</td>
+            <td class="note-ok">調解不成立(114/12/16)</td>
+          </tr>
+          <tr>
+            <td><strong>楊昕如</strong></td>
+            <td><span class="badge b-file">等待裁定通過</span></td>
+            <td>陳報(一)</td>
+            <td class="next-step">等待更生裁定開始</td>
+            <td class="note-ok">調解不成立(114/12/16)</td>
+          </tr>
+          <tr>
+            <td><strong>盧立偉</strong></td>
+            <td><span class="badge b-file">等待裁定通過</span></td>
+            <td>陳報(一)</td>
+            <td class="next-step">等待更生裁定開始</td>
+            <td class="note-ok">—</td>
+          </tr>
+          <tr>
+            <td><strong>莊進龍</strong></td>
+            <td><span class="badge b-file">等待裁定通過</span></td>
+            <td>補正已遞</td>
+            <td class="next-step">等待法院更生裁定開始</td>
+            <td class="note-ok">—</td>
+          </tr>
+          <!-- 等待調解（最近送件的排最上面） -->
+          <tr class="group-row"><td colspan="5">▌ 等待調解</td></tr>
+          <tr>
+            <td><strong>許紫喬</strong></td>
+            <td><span class="badge b-mediate">等調解</span></td>
+            <td>聲請狀（115/6/12）</td>
+            <td class="next-step">等調解通知</td>
+            <td class="note-ok">聲請狀已送出</td>
+          </tr>
+          <tr>
+            <td><strong>陳品丹</strong></td>
+            <td><span class="badge b-mediate">等調解</span></td>
+            <td>聲請狀（115/5/22）</td>
+            <td class="next-step">等調解通知</td>
+            <td class="note-ok">聲請狀已送出</td>
+          </tr>
+          <tr>
+            <td><strong>曾俊明</strong></td>
+            <td><span class="badge b-mediate">等調解</span></td>
+            <td>聲請狀（115/5/12）</td>
+            <td class="next-step">等調解通知</td>
+            <td class="note-ok">聲請狀已送出</td>
+          </tr>
+          <tr>
+            <td><strong>柯媛齡</strong></td>
+            <td><span class="badge b-mediate">等調解</span></td>
+            <td>調解通知（115/5/22）</td>
+            <td class="next-step">115/6/23 下午3:30 出席調解</td>
+            <td class="note-ok">115/6/23（週二）下午3:30，南投地院調解中心（南投市中興路759號2樓），相對人：裕融企業</td>
+          </tr>
+          <!-- 剛開辦 -->
+          <tr class="group-row"><td colspan="5">▌ 剛開辦 / 資料收集中</td></tr>
+          <tr>
+            <td><strong>陳翊銓</strong></td>
+            <td><span class="badge b-new">剛開辦</span></td>
+            <td>—</td>
+            <td class="next-step">準備開辦資料</td>
+            <td class="note-ok">新案件</td>
+          </tr>
+          <tr>
+            <td><strong>張曼君</strong></td>
+            <td><span class="badge b-new">剛開辦</span></td>
+            <td>—</td>
+            <td class="next-step">準備開辦資料</td>
+            <td class="note-ok">新案件</td>
+          </tr>
+          <tr>
+            <td><strong>張月美</strong></td>
+            <td><span class="badge b-new">剛開辦</span></td>
+            <td>—</td>
+            <td class="next-step">準備開辦資料</td>
+            <td class="note-ok">新案件</td>
+          </tr>
+          <!-- 聲請人想撤回 -->
+          <tr class="group-row"><td colspan="5">▌ 聲請人想撤回（等待法院駁回或辦理撤回）</td></tr>
+          <tr>
+            <td><strong>張珮雨</strong></td>
+            <td><span class="badge b-file">待撤回</span></td>
+            <td>陳報(六)</td>
+            <td class="next-step">等法院駁回</td>
+            <td class="note-ok">聲請人表示不想繼續，待法院駁回</td>
+          </tr>
+          <tr>
+            <td><strong>周世偉</strong></td>
+            <td><span class="badge b-file">待撤回</span></td>
+            <td>陳報(二) + 訊問</td>
+            <td class="next-step">等法院駁回</td>
+            <td class="note-ok">聲請人表示不想繼續，待法院駁回</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 已結案 ── -->
+  <div class="card">
+    <div class="card-header gray">✅ 已結案（31 件）</div>
+    <div class="card-body">
+      <div class="closed-list">
+        <span class="closed-chip">洪一佑</span>
+        <span class="closed-chip">吳姿瑢</span>
+        <span class="closed-chip">全亞伯</span>
+        <span class="closed-chip">張喬寧</span>
+        <span class="closed-chip">張淑娟</span>
+        <span class="closed-chip">張獻其</span>
+        <span class="closed-chip">張瓴華</span>
+        <span class="closed-chip">戴雅玲</span>
+        <span class="closed-chip">朱寶妲</span>
+        <span class="closed-chip">李金城</span>
+        <span class="closed-chip">林淑宜</span>
+        <span class="closed-chip">林谷周</span>
+        <span class="closed-chip">林鈺津</span>
+        <span class="closed-chip">蔡瑜珊</span>
+        <span class="closed-chip">謝有勝</span>
+        <span class="closed-chip">陳博煌</span>
+        <span class="closed-chip">陳靜彤</span>
+        <span class="closed-chip">黃柏榮</span>
+        <span class="closed-chip">戴昆呈</span>
+        <span class="closed-chip">陳國源</span>
+        <span class="closed-chip">盧建諭</span>
+        <span class="closed-chip">簡心慈</span>
+        <span class="closed-chip">蘇琲婷</span>
+        <span class="closed-chip">簡淑容</span>
+        <span class="closed-chip">蔡天瑞</span>
+        <span class="closed-chip">楊淑惠</span>
+        <span class="closed-chip">張雅航</span>
+        <span class="closed-chip">卓俊宏</span>
+        <span class="closed-chip">劉惠萍</span>
+        <span class="closed-chip">謝逸璋</span>
+        <span class="closed-chip">鄭采彤</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 使用說明 ── -->
+  <div class="card">
+    <div class="card-header green">💡 如何更新這份追蹤表</div>
+    <div class="card-body">
+      <div class="tip-box">
+        <strong>直接告訴 Claude 任何更新，我會幫你同步到文件。例如：</strong><br><br>
+        「鄭采彤 陳報十二已送出」<br>
+        「黃文虹 4/28 開庭完畢，下次開庭是 X 月 X 日」<br>
+        「蔡天瑞 銀行同意撤回了，確認結案」<br>
+        「新案件：王小明，剛開辦」<br>
+        「莊美滿 陳報二已找到並掃描上傳」
+      </div>
+      <div style="margin-top:12px">
+        <span class="update-badge">最後更新：2026-06-21（新增陳翊銓、張曼君）</span>
+        <span style="color:#aaa;font-size:13px;margin-left:12px;">每次更新後請告知 Claude 修改日期</span>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  債清案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-04-14
+</footer>
+
+</body>
+</html>

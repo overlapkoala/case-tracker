@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一般案件追蹤表</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: #f0f2f5; color: #333; font-size: 15px;
+    }
+    header {
+      background: linear-gradient(135deg, #2c3e50, #4a6fa5);
+      color: white; padding: 24px 32px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+    header .meta { font-size: 13px; opacity: .8; margin-top: 4px; }
+    .stats { display: flex; gap: 20px; }
+    .stat-box {
+      background: rgba(255,255,255,.15); border-radius: 10px;
+      padding: 10px 18px; text-align: center; min-width: 80px;
+    }
+    .stat-box .num { font-size: 26px; font-weight: 700; }
+    .stat-box .lbl { font-size: 12px; opacity: .85; }
+
+    main { max-width: 1440px; margin: 0 auto; padding: 24px 20px; }
+
+    .card {
+      background: white; border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07);
+      margin-bottom: 24px; overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 22px; font-size: 16px; font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .card-header.red    { background: #fff5f5; color: #c0392b; border-color: #fdd; }
+    .card-header.orange { background: #fff8f0; color: #d35400; border-color: #fde8cc; }
+    .card-header.blue   { background: #f0f6ff; color: #1a5a9a; border-color: #d0e4f7; }
+    .card-header.green  { background: #f0fff4; color: #27ae60; border-color: #d0f0dc; }
+    .card-header.gray   { background: #f7f7f7; color: #555;    border-color: #e8e8e8; }
+    .card-body { padding: 18px 22px; }
+
+    /* 緊急事項 */
+    .alert-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 12px 0; border-bottom: 1px solid #fde8cc;
+    }
+    .alert-item:last-child { border-bottom: none; }
+    .alert-icon {
+      font-size: 20px; flex-shrink: 0; margin-top: 2px;
+    }
+    .alert-title { font-weight: 700; font-size: 15px; color: #c0392b; }
+    .alert-desc { font-size: 13px; color: #555; margin-top: 3px; line-height: 1.6; }
+
+    /* 開庭期日 */
+    .court-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 14px 0; border-bottom: 1px solid #f0f0f0;
+    }
+    .court-item:last-child { border-bottom: none; }
+    .court-date {
+      border-radius: 10px; padding: 8px 14px;
+      text-align: center; min-width: 80px; flex-shrink: 0;
+    }
+    .court-date.urgent { background: #e74c3c; color: white; }
+    .court-date.soon   { background: #e67e22; color: white; }
+    .court-date.normal { background: #2d6a9f; color: white; }
+    .court-date .day   { font-size: 24px; font-weight: 700; line-height: 1; }
+    .court-date .month { font-size: 12px; opacity: .9; }
+    .court-info .cname { font-size: 17px; font-weight: 700; }
+    .court-info .ctype { color: #666; font-size: 13px; margin-top: 3px; line-height: 1.6; }
+    .court-info .ctag  {
+      display: inline-block; border-radius: 6px; padding: 2px 10px;
+      font-size: 12px; margin-top: 5px; font-weight: 600;
+    }
+    .ctag.criminal { background: #fdf2f2; color: #c0392b; }
+    .ctag.civil    { background: #eaf4fb; color: #1a5a9a; }
+    .ctag.family   { background: #f5eef8; color: #7d3c98; }
+
+    /* 案件表格 */
+    .case-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .case-table th {
+      background: #f0f4f8; padding: 10px 14px; text-align: left;
+      font-weight: 600; color: #444; border-bottom: 2px solid #dde3ea;
+      white-space: nowrap;
+    }
+    .case-table td {
+      padding: 9px 14px; border-bottom: 1px solid #f0f0f0;
+      vertical-align: top; line-height: 1.55;
+    }
+    .case-table tr:hover td { background: #fafcff; }
+    .case-table tr.urgent-row td { background: #fff8f5 !important; }
+
+    /* 分類標題列 */
+    .group-row td {
+      font-weight: 700; font-size: 13px;
+      padding: 8px 14px; letter-spacing: .5px;
+    }
+    .group-row.civil    td { background: #eaf4fb; color: #1a5a9a; border-left: 4px solid #2980b9; }
+    .group-row.criminal td { background: #fdf2f2; color: #922b21; border-left: 4px solid #c0392b; }
+    .group-row.family   td { background: #f5eef8; color: #6c3483; border-left: 4px solid #8e44ad; }
+    .group-row.will     td { background: #eaf7f5; color: #0e6655; border-left: 4px solid #16a085; }
+    .group-row.draft    td { background: #fef6ee; color: #a04000; border-left: 4px solid #d35400; }
+    .group-row.other    td { background: #f4f6f6; color: #555;    border-left: 4px solid #7f8c8d; }
+
+    /* 進度標籤 */
+    .badge {
+      display: inline-block; border-radius: 20px;
+      padding: 3px 10px; font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .badge.b-debate  { background: #e8f0fb; color: #1a3a8a; border: 1px solid #b8cef5; }
+    .badge.b-trial   { background: #eaf4fb; color: #1a5a9a; }
+    .badge.b-mediate { background: #fff3cd; color: #856404; }
+    .badge.b-correct { background: #fde8cc; color: #a04000; }
+    .badge.b-warn    { background: #fdedec; color: #c0392b; }
+    .badge.b-invest  { background: #f5eef8; color: #7d3c98; }
+    .badge.b-nopros  { background: #fdf2e9; color: #ca6f1e; }
+    .badge.b-exec    { background: #fef9e7; color: #b7770d; }
+    .badge.b-assess  { background: #eaf7f5; color: #0e8f7a; }
+    .badge.b-new     { background: #f0f0f0; color: #777; }
+    .badge.b-prep    { background: #e8f8f0; color: #1e8449; }
+
+    .next-step { color: #2d6a9f; font-size: 13px; line-height: 1.55; }
+    .urgent-next { color: #c0392b !important; font-weight: 600; }
+    .td-court { font-size: 13px; color: #2d6a9f; white-space: nowrap; }
+
+    /* 可編輯備註 */
+    .note-editable {
+      min-height: 26px; padding: 4px 8px;
+      border-radius: 6px; border: 1.5px solid transparent;
+      font-size: 13px; color: #555; line-height: 1.6;
+      cursor: text; transition: border-color .2s, background .2s;
+      white-space: pre-wrap; word-break: break-all;
+    }
+    .note-editable:hover  { background: #f8fbff; border-color: #cde; }
+    .note-editable:focus  { outline: none; background: #f0f7ff; border-color: #4a6fa5; }
+    .note-editable.empty::before {
+      content: attr(data-placeholder); color: #ccc; pointer-events: none;
+    }
+
+    /* 儲存提示 */
+    .save-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #27ae60; color: white; border-radius: 10px;
+      padding: 10px 20px; font-size: 14px; font-weight: 600;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .3s, transform .3s; z-index: 999; pointer-events: none;
+    }
+    .save-toast.show { opacity: 1; transform: translateY(0); }
+
+    /* 已結案 */
+    .closed-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .closed-chip {
+      background: #f0f0f0; color: #888;
+      border-radius: 20px; padding: 5px 14px; font-size: 14px;
+    }
+
+    /* 說明 */
+    .tip-box {
+      background: #f0f6ff; border-left: 4px solid #4a6fa5;
+      border-radius: 0 10px 10px 0; padding: 14px 18px;
+      margin-bottom: 12px; font-size: 14px; line-height: 1.8; color: #444;
+    }
+    .tip-box strong { color: #1a5a9a; }
+    .update-badge {
+      display: inline-block; background: #e8f4ea; color: #27ae60;
+      border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 600;
+    }
+
+    footer { text-align: center; padding: 24px; color: #aaa; font-size: 13px; }
+
+    @media (max-width: 700px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .stats { flex-wrap: wrap; }
+      .case-table { font-size: 13px; }
+      .case-table td, .case-table th { padding: 7px 9px; }
+    }
+  </style>
+</head>
+<body>
+<style>
+#pw-overlay{position:fixed;inset:0;background:#1a1a2e;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:sans-serif}
+#pw-box{background:#fff;border-radius:12px;padding:40px 36px;text-align:center;width:320px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+#pw-box h2{margin:0 0 8px;color:#1a1a2e;font-size:1.3rem}
+#pw-box p{color:#666;font-size:.9rem;margin:0 0 24px}
+#pw-input{width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none}
+#pw-input:focus{border-color:#4a90d9}
+#pw-btn{margin-top:12px;width:100%;padding:11px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}
+#pw-btn:hover{background:#2d2d5e}
+#pw-err{color:#e74c3c;font-size:.85rem;margin-top:8px;min-height:20px}
+</style>
+<div id="pw-overlay">
+  <div id="pw-box">
+    <h2>⚖️ 律師事務所</h2>
+    <p>案件追蹤系統・請輸入密碼</p>
+    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()">
+    <button id="pw-btn" onclick="checkPw()">進入</button>
+    <div id="pw-err"></div>
+  </div>
+</div>
+<script>
+(function(){
+  if(sessionStorage.getItem('case_auth')==='1'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var o=document.getElementById('pw-overlay');
+      if(o)o.remove();
+    });
+  }
+})();
+async function checkPw(){
+  var v=document.getElementById('pw-input').value;
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
+  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(hex==='2d0ac88c9aea56f67f1dcab484cd301d589cc7cdfd35d4a7cdaea21b295ba268'){
+    sessionStorage.setItem('case_auth','1');
+    document.getElementById('pw-overlay').remove();
+  }else{
+    document.getElementById('pw-err').textContent='密碼錯誤，請再試一次';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+</script>
+
+
+<div class="save-toast" id="saveToast">✓ 備註已儲存</div>
+
+<header>
+  <div>
+    <h1>⚖️ 一般案件追蹤表</h1>
+    <div class="meta">最後更新：2026-06-23　｜　由 Claude 協助管理（依中華民國法律進度排序）</div>
+  </div>
+  <div class="stats">
+    <div class="stat-box"><div class="num">35</div><div class="lbl">進行中</div></div>
+    <div class="stat-box"><div class="num">37</div><div class="lbl">已結案</div></div>
+  </div>
+</header>
+
+<main>
+
+<!-- ── ⚠️ 緊急事項 ── -->
+<div class="card">
+  <div class="card-header orange">⚠️ 緊急事項（近期必辦）</div>
+  <div class="card-body">
+    <div class="alert-item">
+      <div class="alert-icon">🔴</div>
+      <div>
+        <div class="alert-title">【明天！6/24 上午9:50】黃新丁 — 台中地檢署偵查庭</div>
+        <div class="alert-desc">台中市西區自由路1段91號，偵查庭／詢問室（115年度偵字第9936號，交通致傷逃等）。請至自動報到機報到。</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon">🟠</div>
+      <div>
+        <div class="alert-title">【6/26 前截止！】李麗娟 — 新北地院補件（僅剩3天）</div>
+        <div class="alert-desc">113年度重家繼訴字第39號（分割遺產），新北地院家事法庭要求 6/26 前提出：①更正及追加後訴聲明及分割附表（含分割方法）②被繼承人所遺全部不動產第一類謄本（須載明全體繼承人）③陳報婚後財產明細。</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon">🟡</div>
+      <div>
+        <div class="alert-title">【7/11-7/16 前截止】陳品年 — 桃園地院補件（收文後30天）</div>
+        <div class="alert-desc">115年度桃司調字第172號（分割共有物），法院 6/11 發文（6/16 收到），要求 30 天內補正：①土地第一類謄本（含所有權部、他項權利部）②全體所有權人及抵押權人之最新戶籍謄本③土地使用現況照片。</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon">🟡</div>
+      <div>
+        <div class="alert-title">【7/17 前截止】李麗娟 — 陳報婚後財產到新北地院</div>
+        <div class="alert-desc">新北地院函要求兩造於 7/17 前陳報原告與被繼承人各自於基準日之現存婚後財產（含財產明細及金額），並備繕本逕送他造。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 開庭期日 ── -->
+<div class="card">
+  <div class="card-header red">📅 即將到來的開庭 / 期日</div>
+  <div class="card-body">
+
+    <div class="court-item">
+      <div class="court-date urgent"><div class="day">24</div><div class="month">6月</div></div>
+      <div class="court-info">
+        <div class="cname">黃新丁 <span style="font-size:13px;color:#c0392b;font-weight:400;">⚡ 明天！</span></div>
+        <div class="ctype">上午 9:50　｜　台中地檢署偵查庭（台中市西區自由路1段91號）<br>115年度偵字第9936號　交通致傷逃等　刑事辯護</div>
+        <span class="ctag criminal">刑事偵查</span>
+      </div>
+    </div>
+
+    <div class="court-item">
+      <div class="court-date normal"><div class="day">7</div><div class="month">7月</div></div>
+      <div class="court-info">
+        <div class="cname">鄭坤展</div>
+        <div class="ctype">下午 2:20　｜　彰化地院員林簡易庭（彰化縣員林市員林大道2段1號，第2調解室）<br>114年度彰暫調字第100號　分割共有物（對造：鄭銅釘）</div>
+        <span class="ctag civil">民事調解</span>
+      </div>
+    </div>
+
+    <div class="court-item">
+      <div class="court-date normal"><div class="day">17</div><div class="month">7月</div></div>
+      <div class="court-info">
+        <div class="cname">朱高邦</div>
+        <div class="ctype">下午 4:20　｜　台中簡易庭（台中市西區自由路1段91號，第二辦公大樓2樓第32法庭）<br>115年度中簡字第959號　撤銷調解（被告：陳怡萃）</div>
+        <span class="ctag civil">民事辯論</span>
+      </div>
+    </div>
+
+    <div class="court-item">
+      <div class="court-date normal"><div class="day">28</div><div class="month">7月</div></div>
+      <div class="court-info">
+        <div class="cname">吳金鋒（一）</div>
+        <div class="ctype">下午 4:45　｜　台中地院家事法庭（本院簡易大樓2樓民事第35法庭）<br>115年度家訴字第21號　返還代墊款等（被告：鄭芳宜）</div>
+        <span class="ctag family">家事辯論</span>
+      </div>
+    </div>
+
+    <div class="court-item">
+      <div class="court-date normal"><div class="day">29</div><div class="month">7月</div></div>
+      <div class="court-info">
+        <div class="cname">李麗娟 <span style="font-size:13px;color:#e67e22;font-weight:400;">⚠️ 6/26 前需補件</span></div>
+        <div class="ctype">下午 4:00　｜　新北地院板橋院區（板橋區民生路1段30巷1號，二樓家事第四法庭）<br>113年度重家繼訴字第39號　分割遺產（被告：張龍兩等）　準備程序</div>
+        <span class="ctag family">家事準備程序</span>
+      </div>
+    </div>
+
+    <div class="court-item">
+      <div class="court-date normal"><div class="day">30</div><div class="month">7月</div></div>
+      <div class="court-info">
+        <div class="cname">吳金鋒（二）</div>
+        <div class="ctype">下午 3:10　｜　台中地院家事法庭（本院簡易大樓2樓民事第34法庭）<br>115年度婚字第243號　離婚等（原告：鄭芳宜，被告：吳金鋒等）</div>
+        <span class="ctag family">家事辯論</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 案件追蹤總表 ── -->
+<div class="card">
+  <div class="card-header blue">📁 案件追蹤總表（35 件進行中，依法律進度排序）</div>
+  <div class="card-body" style="padding:0;overflow-x:auto;">
+    <table class="case-table">
+      <thead>
+        <tr>
+          <th style="min-width:90px;">當事人</th>
+          <th style="min-width:120px;">係屬院區</th>
+          <th style="min-width:140px;">目前進度</th>
+          <th style="min-width:190px;">下一步建議</th>
+          <th style="min-width:230px;">備註（可直接點擊編輯）</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- ══ 民事 ══ -->
+        <tr class="group-row civil"><td colspan="5">▌ 民事（共 16 件，依進度排序）</td></tr>
+
+        <tr>
+          <td><strong>朱高邦</strong></td>
+          <td class="td-court">台中簡易庭</td>
+          <td><span class="badge b-debate">言詞辯論（7/17）</span></td>
+          <td class="next-step">7/17 下午4:20 出席辯論庭；辯論後靜候判決（一審判決後20日內可上訴）</td>
+          <td><div class="note-editable" contenteditable="true" data-key="朱高邦">115中簡字第959號，撤銷調解；對造：陳怡萃；2萬、2萬、1500元代墊，若未開庭駁回免收2萬</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>洪菀茹</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-debate">言詞辯論終結</span></td>
+          <td class="next-step">等候判決；收到判決書後確認是否上訴（20日內）</td>
+          <td><div class="note-editable" contenteditable="true" data-key="洪菀茹">已提出言詞辯論意旨狀；3/25洪婉如書狀已送</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>蕭秀春等</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-trial">一審（含部分撤回）</span></td>
+          <td class="next-step">確認撤回部分起訴是否已生效；等後續開庭通知；確認土地複丈成果</td>
+          <td><div class="note-editable" contenteditable="true" data-key="蕭秀春">拆圍牆案；已撤回部分起訴；等筆錄、發函問單位確認現有巷道；土地複丈結果待確認</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>李翼林</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-trial">一審（調查證據）</span></td>
+          <td class="next-step">協助安排證人出庭；確認傳票送達狀況；視需要提書狀補充說明</td>
+          <td><div class="note-editable" contenteditable="true" data-key="李翼林_民事">法院命傳喚證人；刑事(告訴)部分已不起訴結案</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>江蓉嫻</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-trial">一審（審理中）</span></td>
+          <td class="next-step">等開庭通知；準備書狀回應對造主張</td>
+          <td><div class="note-editable" contenteditable="true" data-key="江蓉嫻_民事">家事案已結案（宣判確定）；此為另一民事案件；115/2/13有開庭</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>王世利</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-trial">一審（審理中）</span></td>
+          <td class="next-step">等開庭通知；確認下次開庭日期</td>
+          <td><div class="note-editable" contenteditable="true" data-key="王世利">115/4/23有開庭；有不起訴處分（可能有刑事部分已結）</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>林素珍</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-trial">一審（審理中）</span></td>
+          <td class="next-step">等開庭通知</td>
+          <td><div class="note-editable" contenteditable="true" data-key="林素珍">法扶；115/6/3有開庭；對造有反訴準備書狀</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>黃鈺珊（澎湖）</strong></td>
+          <td class="td-court">澎湖地院</td>
+          <td><span class="badge b-trial">一審（審理中）</span></td>
+          <td class="next-step">等開庭通知；確認袋地通行方案</td>
+          <td><div class="note-editable" contenteditable="true" data-key="黃鈺珊">袋地通行案；115/3/19有開庭；已聲請聲明變更</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>高芮棋</strong></td>
+          <td class="td-court">彰化地院</td>
+          <td><span class="badge b-trial">一審（審理中）</span></td>
+          <td class="next-step">等開庭通知；確認醫療鑑定進度</td>
+          <td><div class="note-editable" contenteditable="true" data-key="高芮棋">法扶；車損案；有秀傳醫院函及彰基收據</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>高玉美（劉志芬）</strong></td>
+          <td class="td-court">新竹地院</td>
+          <td><span class="badge b-trial">一審（有鑑定）</span></td>
+          <td class="next-step">等地政鑑定及估價結果；確認鑑定報告是否已完成</td>
+          <td><div class="note-editable" contenteditable="true" data-key="高玉美">新竹湖口地政；115/2/26有開庭；已有不動產估價報告書</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>林英銘</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-mediate">調解（5/28後）</span></td>
+          <td class="next-step">確認5/28調解結果；若調解成立辦理後續；若不成立，等法院轉訴訟程序通知</td>
+          <td><div class="note-editable" contenteditable="true" data-key="林英銘">115/5/28調解庭已過；結果尚待確認</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>鄭坤展</strong></td>
+          <td class="td-court">彰化地院員林簡易庭</td>
+          <td><span class="badge b-mediate">調解（7/7）</span></td>
+          <td class="next-step">7/7 下午2:20 出席調解；帶土地謄本及分割方案；若調解不成立，轉訴訟</td>
+          <td><div class="note-editable" contenteditable="true" data-key="鄭坤展">114彰暫調字第100號；分割共有物；對造：鄭銅釘；確認土地價值</div></td>
+        </tr>
+
+        <tr class="urgent-row">
+          <td><strong>陳品年</strong></td>
+          <td class="td-court">桃園地院桃園簡易庭</td>
+          <td><span class="badge b-correct">⚠️ 補件中</span></td>
+          <td class="next-step urgent-next">⚠️ 7/11-7/16前：向地政聲請土地謄本及全體所有權人戶籍謄本並補件到桃園地院</td>
+          <td><div class="note-editable" contenteditable="true" data-key="陳品年">115桃司調字第172號；分割共有物；115/6/11法院發函，要求30天內補件（①土地謄本②戶籍謄本③現況照片）</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>蔡篤銓</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-warn">起訴後等通知</span></td>
+          <td class="next-step">等法院分案、送達通知；準備答辯書狀</td>
+          <td><div class="note-editable" contenteditable="true" data-key="蔡篤銓">民事起訴狀已於 3/09 送出；法院有簡易庭通知（已過）</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>邱秋娥</strong></td>
+          <td class="td-court">—（尚未起訴）</td>
+          <td><span class="badge b-warn">存函後等回應</span></td>
+          <td class="next-step">追蹤對方回應；逾期未回應則研議正式提起訴訟（民事起訴或聲請調解）</td>
+          <td><div class="note-editable" contenteditable="true" data-key="邱秋娥">3/25律師存函已寄出；等對方回覆</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>阮清香</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-warn">需提答辯狀</span></td>
+          <td class="next-step">盡速提出民事答辯狀（對造已提起民事訴訟）；確認答辯期限</td>
+          <td><div class="note-editable" contenteditable="true" data-key="阮清香_民事">刑事(告訴)已宣判確定結案；民事部分對造已起訴；已完成民事答辯狀（115/5/9）</div></td>
+        </tr>
+
+        <!-- ══ 刑事 ══ -->
+        <tr class="group-row criminal"><td colspan="5">▌ 刑事（共 8 件，依進度排序）</td></tr>
+
+        <tr>
+          <td><strong>洪子恒</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-trial">一審辯護</span></td>
+          <td class="next-step">確認下次庭期；準備辯護書狀；確認指辯請款程序</td>
+          <td><div class="note-editable" contenteditable="true" data-key="洪子恒">指辯請款中；確認是否已完結</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>王亭宜</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-trial">一審辯護</span></td>
+          <td class="next-step">等下次開庭通知；準備辯護書狀及答辯策略</td>
+          <td><div class="note-editable" contenteditable="true" data-key="王亭宜">法扶；115/6/12有開庭；刑事辯護</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>賴品霏</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-trial">一審辯護</span></td>
+          <td class="next-step">等開庭通知；持續備妥辯護策略</td>
+          <td><div class="note-editable" contenteditable="true" data-key="賴品霏">115/6/21已送刑事答辯狀；待開庭</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>張李夏</strong></td>
+          <td class="td-court">基隆地檢署</td>
+          <td><span class="badge b-invest">偵查中</span></td>
+          <td class="next-step">等下次偵查庭通知；準備偵查答辯；確認被告或告訴人身分</td>
+          <td><div class="note-editable" contenteditable="true" data-key="張李夏">115/6/8有開庭通知（已請假）；115/6/15基隆地檢偵查已過</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>謝安江</strong></td>
+          <td class="td-court">苗栗地檢署</td>
+          <td><span class="badge b-invest">偵查中</span></td>
+          <td class="next-step">接案後準備偵查辯護書狀（說明謝安江是網路詐騙受害者，非共犯；提出匯款紀錄及對話證據）</td>
+          <td><div class="note-editable" contenteditable="true" data-key="謝安江">法扶（115/6/10申請）；苗栗地檢115偵4850；詐欺被告（網購詐騙受害者）；原6/5庭期已延期</div></td>
+        </tr>
+
+        <tr class="urgent-row">
+          <td><strong>黃新丁</strong></td>
+          <td class="td-court">台中地檢署</td>
+          <td><span class="badge b-invest">偵查中（⚡ 明天）</span></td>
+          <td class="next-step urgent-next">⚡ 明天 6/24 上午9:50 出庭！台中地檢署偵查庭（自由路91號）</td>
+          <td><div class="note-editable" contenteditable="true" data-key="黃新丁">115偵字第9936號；交通致傷逃等；刑事辯護；俊億介紹，僅收2萬，剩下4萬</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>王裕華</strong></td>
+          <td class="td-court">台中地檢署</td>
+          <td><span class="badge b-invest">偵查中</span></td>
+          <td class="next-step">等下次偵查庭通知；確認大樓案最新進度</td>
+          <td><div class="note-editable" contenteditable="true" data-key="王裕華">刑事辯護；115/1/5、1/22台中地檢偵查；大樓案；3/25已送答辯狀</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>高珮瑄</strong></td>
+          <td class="td-court">彰化地檢署（再議中）</td>
+          <td><span class="badge b-nopros">不起訴→再議中</span></td>
+          <td class="next-step">等高檢署再議結果；若再議駁回，10日內評估是否聲請交付審判（刑事訴訟法第258-1條）</td>
+          <td><div class="note-editable" contenteditable="true" data-key="高珮瑄">彰化地檢115偵字第357號；詐欺告訴人（前男友詐騙投資26.7萬）；115/5/25收到不起訴處分書；已聲請再議</div></td>
+        </tr>
+
+        <!-- ══ 家事 ══ -->
+        <tr class="group-row family"><td colspan="5">▌ 家事（共 4 件，依進度排序）</td></tr>
+
+        <tr>
+          <td><strong>吳金鋒</strong></td>
+          <td class="td-court">台中地院家事法庭</td>
+          <td><span class="badge b-debate">言詞辯論（7/28、7/30）</span></td>
+          <td class="next-step">7/28 下午4:45 出席辯論（返還代墊款，家訴字第21號）；7/30 下午3:10 出席辯論（離婚案，婚字第243號）；準備兩案辯論書狀</td>
+          <td><div class="note-editable" contenteditable="true" data-key="吳金鋒">①返還代墊款（家訴21號，原告吳金鋒）②離婚案（婚字243號，被告吳金鋒）；對造：鄭芳宜</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>王臆宣</strong></td>
+          <td class="td-court">台中地院家事法庭</td>
+          <td><span class="badge b-trial">一審（審理中）</span></td>
+          <td class="next-step">等開庭通知；持續追蹤子女會面交往執行情況</td>
+          <td><div class="note-editable" contenteditable="true" data-key="王臆宣">子女會面交往；已有多份裁定；看暫時會面狀況</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>石健均</strong></td>
+          <td class="td-court">台中地院家事法庭</td>
+          <td><span class="badge b-assess">鑑定中（輔助宣告）</span></td>
+          <td class="next-step">等中山醫學大學鑑定結果；若鑑定確認，準備聲請輔助宣告裁定；如確認可能告刑事（出租626）</td>
+          <td><div class="note-editable" contenteditable="true" data-key="石健均">輔助宣告案；已委託中山醫護理之家鑑定；如確認回頭告刑事（出租626）</div></td>
+        </tr>
+
+        <tr class="urgent-row">
+          <td><strong>李麗娟</strong></td>
+          <td class="td-court">新北地院（板橋院區）</td>
+          <td><span class="badge b-prep">準備程序（7/29）</span></td>
+          <td class="next-step urgent-next">⚠️ 6/26前補件（更正聲明+謄本）；7/17前陳報婚後財產；7/29 下午4:00 出席新北地院準備程序</td>
+          <td><div class="note-editable" contenteditable="true" data-key="李麗娟">113重家繼訴字第39號；分割遺產；被告：張龍兩等；含婚後財產陳報</div></td>
+        </tr>
+
+        <!-- ══ 遺囑 ══ -->
+        <tr class="group-row will"><td colspan="5">▌ 遺囑（目前無進行中案件）</td></tr>
+
+        <!-- ══ 撰狀 ══ -->
+        <tr class="group-row draft"><td colspan="5">▌ 撰狀（目前無進行中案件）</td></tr>
+
+        <!-- ══ 其他 ══ -->
+        <tr class="group-row other"><td colspan="5">▌ 其他 / 特殊 / 待確認</td></tr>
+
+        <tr>
+          <td><strong>高進財</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-exec">強制執行</span></td>
+          <td class="next-step">確認執行法院進度；追蹤提存所及債務人財產狀況</td>
+          <td><div class="note-editable" contenteditable="true" data-key="高進財_強執">民事案已結案（判決確定）；現進入強制執行階段；有提存所函</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>史美杰</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-assess">鑑定中</span></td>
+          <td class="next-step">等鑑定機構出具鑑定報告；確認地檢通知後續</td>
+          <td><div class="note-editable" contenteditable="true" data-key="史美杰">委託台灣經濟科技發展研究院鑑定；有地檢通知；有監視器影像資料</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>林文彬</strong></td>
+          <td class="td-court">台中地院</td>
+          <td><span class="badge b-new">輔助宣告（待確認）</span></td>
+          <td class="next-step">確認案件目前狀態及庭期</td>
+          <td><div class="note-editable" contenteditable="true" data-key="林文彬_輔助" data-placeholder="點此輸入備註…"></div></td>
+        </tr>
+
+        <tr>
+          <td><strong>劉政昕</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-new">待確認</span></td>
+          <td class="next-step">確認案件類型、法院及目前進度</td>
+          <td><div class="note-editable" contenteditable="true" data-key="劉政昕" data-placeholder="點此輸入備註…"></div></td>
+        </tr>
+
+        <tr>
+          <td><strong>誠宇工業</strong></td>
+          <td class="td-court">—</td>
+          <td><span class="badge b-new">待確認（協議中？）</span></td>
+          <td class="next-step">確認曾瑞田協議內容及後續是否需要提起訴訟</td>
+          <td><div class="note-editable" contenteditable="true" data-key="誠宇工業">有曾瑞田協議書；案件類型待確認</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>陳雨凡</strong></td>
+          <td class="td-court">—</td>
+          <td><span class="badge b-new">待確認（聲明函）</span></td>
+          <td class="next-step">確認律師聲明函是否已送出；後續是否有訴訟動作</td>
+          <td><div class="note-editable" contenteditable="true" data-key="陳雨凡">有律師聲明函；案件類型待確認</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>林文彬（另案）</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-new">待確認</span></td>
+          <td class="next-step">確認此案件類型與進度</td>
+          <td><div class="note-editable" contenteditable="true" data-key="林文彬_其他" data-placeholder="點此輸入備註…"></div></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── 已結案 ── -->
+<div class="card">
+  <div class="card-header gray">✅ 已結案（37 件）</div>
+  <div class="card-body">
+    <div class="closed-list">
+      <span class="closed-chip">三富</span>
+      <span class="closed-chip">彰鍇</span>
+      <span class="closed-chip">劉娟妃</span>
+      <span class="closed-chip">劉子寧</span>
+      <span class="closed-chip">吳仁凱</span>
+      <span class="closed-chip">康炎生</span>
+      <span class="closed-chip">戴月紅</span>
+      <span class="closed-chip">李孟儒</span>
+      <span class="closed-chip">林惠貞</span>
+      <span class="closed-chip">林晉宏</span>
+      <span class="closed-chip">林筠婷</span>
+      <span class="closed-chip">林素美</span>
+      <span class="closed-chip">楊仁劭</span>
+      <span class="closed-chip">楊芷晨</span>
+      <span class="closed-chip">王浩穎</span>
+      <span class="closed-chip">王麗華</span>
+      <span class="closed-chip">盧文津</span>
+      <span class="closed-chip">鄧學聯</span>
+      <span class="closed-chip">鄭兆麟</span>
+      <span class="closed-chip">陳冠霖</span>
+      <span class="closed-chip">陳玟旭</span>
+      <span class="closed-chip">陳禾靜</span>
+      <span class="closed-chip">韓介仁</span>
+      <span class="closed-chip">馬春錦</span>
+      <span class="closed-chip">楊善雯</span>
+      <span class="closed-chip">林宣佑</span>
+      <span class="closed-chip">嚴娟娟</span>
+      <span class="closed-chip">王啟瑞等</span>
+      <span class="closed-chip">張竹安</span>
+      <span class="closed-chip">陳姵均</span>
+      <span class="closed-chip">羅謙</span>
+      <span class="closed-chip">林佑丞</span>
+      <span class="closed-chip">徐美瑩</span>
+      <span class="closed-chip">蔡欣遙</span>
+      <span class="closed-chip">高俊仁</span>
+      <span class="closed-chip">王邦翰</span>
+      <span class="closed-chip">楊閔如</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 使用說明 ── -->
+<div class="card">
+  <div class="card-header green">💡 如何更新這份追蹤表</div>
+  <div class="card-body">
+    <div class="tip-box">
+      <strong>備註欄：直接在網頁上點擊就能打字，自動儲存在這台電腦。</strong><br><br>
+      <strong>其他更新請告訴 Claude，例如：</strong><br><br>
+      「黃新丁 6/24偵查庭結果：已出庭，下次庭期待通知」<br>
+      「李麗娟 6/26補件已送出」<br>
+      「朱高邦 7/17辯論完畢，等待判決」<br>
+      「謝安江 案件類型更新為刑事，已接案，準備偵查辯護」<br>
+      「高珮瑄 再議結果：駁回，7/XX前聲請交付審判」<br>
+      「新增開庭：○○○，X月X日 上午X時，○○法院」
+    </div>
+    <div style="margin-top:12px">
+      <span class="update-badge">最後更新：2026-06-23（依硬碟文件全面重整，依中華民國法律進度排序）</span>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  一般案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-06-23
+</footer>
+
+<script>
+  const STORAGE_PREFIX = 'general_case_v3_';
+  const toast = document.getElementById('saveToast');
+  let toastTimer;
+
+  function showToast() {
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  function updateEmptyClass(el) {
+    el.classList.toggle('empty', el.textContent.trim() === '');
+  }
+
+  document.querySelectorAll('.note-editable').forEach(el => {
+    const key = STORAGE_PREFIX + el.dataset.key;
+    const saved = localStorage.getItem(key);
+    if (saved !== null) el.textContent = saved;
+    updateEmptyClass(el);
+
+    el.addEventListener('input', () => {
+      localStorage.setItem(key, el.textContent);
+      updateEmptyClass(el);
+      showToast();
+    });
+  });
+</script>
+
+</body>
+</html>
