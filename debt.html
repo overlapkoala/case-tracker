@@ -297,27 +297,7 @@
   </style>
 </head>
 <body>
-<style>
-#pw-overlay{position:fixed;inset:0;background:#1a1a2e;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:sans-serif}
-#pw-box{background:#fff;border-radius:12px;padding:40px 36px;text-align:center;width:320px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
-#pw-box h2{margin:0 0 8px;color:#1a1a2e;font-size:1.3rem}
-#pw-box p{color:#666;font-size:.9rem;margin:0 0 24px}
-#pw-input{width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none}
-#pw-input:focus{border-color:#4a90d9}
-#pw-btn{margin-top:12px;width:100%;padding:11px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}
-#pw-btn:hover{background:#2d2d5e}
-#pw-err{color:#e74c3c;font-size:.85rem;margin-top:8px;min-height:20px}
-</style>
-<div id="pw-overlay">
-  <div id="pw-box">
-    <h2>&#9878; 律師事務所</h2>
-    <p>案件追蹤系統・請輸入密碼</p>
-    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()">
-    <button id="pw-btn" onclick="checkPw()">進入</button>
-    <div id="pw-err"></div>
-  </div>
-</div>
-<script>
+<style>#pw-overlay{position:fixed;inset:0;background:#1a1a2e;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:sans-serif}#pw-box{background:#fff;border-radius:12px;padding:40px 36px;text-align:center;width:320px;box-shadow:0 8px 32px rgba(0,0,0,.3)}#pw-box h2{margin:0 0 8px;color:#1a1a2e;font-size:1.3rem}#pw-box p{color:#666;font-size:.9rem;margin:0 0 24px}#pw-input{width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none}#pw-input:focus{border-color:#4a90d9}#pw-btn{margin-top:12px;width:100%;padding:11px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}#pw-btn:hover{background:#2d2d5e}#pw-err{color:#e74c3c;font-size:.85rem;margin-top:8px;min-height:20px}</style><div id="pw-overlay"><div id="pw-box"><h2>&#9878; 律師事務所</h2><p>案件追蹤系統･請輸入密碼</p><input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()"><button id="pw-btn" onclick="checkPw()">進入</button><div id="pw-err"></div></div></div><script>
 (function(){
   if(sessionStorage.getItem('case_auth')==='1'){
     document.addEventListener('DOMContentLoaded',function(){
