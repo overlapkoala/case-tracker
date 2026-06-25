@@ -196,26 +196,26 @@
 </style>
 <div id="pw-overlay">
   <div id="pw-box">
-    <h2>⚖️ 律師事務所</h2>
+    <h2>&#9878; 律師事務所</h2>
     <p>案件追蹤系統・請輸入密碼</p>
-    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key===&#39;Enter&#39;)checkPw()">
+    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()">
     <button id="pw-btn" onclick="checkPw()">進入</button>
     <div id="pw-err"></div>
   </div>
 </div>
 <script>
 (function(){
-  if(sessionStorage.getItem(&#39;case_auth&#39;)===&#39;1&#39;){
-    document.addEventListener(&#39;DOMContentLoaded&#39;,function(){
-      var o=document.getElementById(&#39;pw-overlay&#39;);
+  if(sessionStorage.getItem('case_auth')==='1'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var o=document.getElementById('pw-overlay');
       if(o)o.remove();
     });
   }
 })();
 async function checkPw(){
-  var v=document.getElementById(&#39;pw-input&#39;).value;
-  var buf=await crypto.subtle.digest(&#39;SHA-256&#39;,new TextEncoder().encode(v));
-  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,&#39;0&#39;)).join(&#39;&#39;);
+  var v=document.getElementById('pw-input').value;
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
+  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
   if(hex==='07334386287751ba02a4588c1a0875dbd074a61bd9e6ab7c48d244eacd0c99e0'){
     sessionStorage.setItem('case_auth','1');
     document.getElementById('pw-overlay').remove();
@@ -236,7 +236,7 @@ async function checkPw(){
     <div class="meta">最後更新：2026-06-25　｜　由 Claude 協助管理（依中華民國法律進度排序）</div>
   </div>
   <div class="stats">
-    <div class="stat-box"><div class="num">35</div><div class="lbl">進行中</div></div>
+    <div class="stat-box"><div class="num">36</div><div class="lbl">進行中</div></div>
     <div class="stat-box"><div class="num">37</div><div class="lbl">已結案</div></div>
   </div>
 </header>
@@ -335,7 +335,7 @@ async function checkPw(){
 
 <!-- ── 案件追蹤總表 ── -->
 <div class="card">
-  <div class="card-header blue">📁 案件追蹤總表（35 件進行中，依法律進度排序）</div>
+  <div class="card-header blue">📁 案件追蹤總表（36 件進行中，依法律進度排序）</div>
   <div class="card-body" style="padding:0;overflow-x:auto;">
     <table class="case-table">
       <thead>
@@ -590,6 +590,14 @@ async function checkPw(){
 
         <!-- ══ 其他 ══ -->
         <tr class="group-row other"><td colspan="5">▌ 其他 / 特殊 / 待確認</td></tr>
+
+        <tr>
+          <td><strong>陳慧蘭</strong></td>
+          <td class="td-court">待確認</td>
+          <td><span class="badge b-exec">強制執行</span></td>
+          <td class="next-step">確認強制執行聲請狀內容（債務人、執行標的、金額）及送件進度</td>
+          <td><div class="note-editable" contenteditable="true" data-key="陳慧蘭">強制執行聲請狀已於6/24送出；詳情待確認（案號、法院、執行標的）</div></td>
+        </tr>
 
         <tr>
           <td><strong>高進財</strong></td>

@@ -310,26 +310,26 @@
 </style>
 <div id="pw-overlay">
   <div id="pw-box">
-    <h2>⚖️ 律師事務所</h2>
+    <h2>&#9878; 律師事務所</h2>
     <p>案件追蹤系統・請輸入密碼</p>
-    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key===&#39;Enter&#39;)checkPw()">
+    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()">
     <button id="pw-btn" onclick="checkPw()">進入</button>
     <div id="pw-err"></div>
   </div>
 </div>
 <script>
 (function(){
-  if(sessionStorage.getItem(&#39;case_auth&#39;)===&#39;1&#39;){
-    document.addEventListener(&#39;DOMContentLoaded&#39;,function(){
-      var o=document.getElementById(&#39;pw-overlay&#39;);
+  if(sessionStorage.getItem('case_auth')==='1'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var o=document.getElementById('pw-overlay');
       if(o)o.remove();
     });
   }
 })();
 async function checkPw(){
-  var v=document.getElementById(&#39;pw-input&#39;).value;
-  var buf=await crypto.subtle.digest(&#39;SHA-256&#39;,new TextEncoder().encode(v));
-  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,&#39;0&#39;)).join(&#39;&#39;);
+  var v=document.getElementById('pw-input').value;
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
+  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
   if(hex==='07334386287751ba02a4588c1a0875dbd074a61bd9e6ab7c48d244eacd0c99e0'){
     sessionStorage.setItem('case_auth','1');
     document.getElementById('pw-overlay').remove();
@@ -399,16 +399,16 @@ async function checkPw(){
     <div class="card-header orange">🎯 下一步行動</div>
     <div class="card-body">
 
-      <!-- 緊急補件 -->
+      <!-- 近期補件 -->
       <div style="margin-bottom:22px;">
-        <div style="font-weight:700;color:#c0392b;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
-          🔴 緊急補件（3天內截止）
+        <div style="font-weight:700;color:#d35400;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+          🟡 近期補件截止
         </div>
         <ul class="issue-list">
           <li>
-            <div class="issue-name">楊昕如 🚨</div>
-            <div class="issue-desc">【🚨 繳費單明天（6/26）到期！今天務必繳費！】 彰化地院更生執行費3,000元繳費單有效至115/6/26，請即日繳費（合作金庫、便利商店均可）；7/8前補件到彰化地院（115年度司執消債更字第62號）：①提出壽險公會查詢結果表 ②預納更生執行費3,000元繳費收據</div>
-            <div class="issue-action" style="background:#fdedec;color:#c0392b;">🚨 今日繳費！</div>
+            <div class="issue-name">楊昕如</div>
+            <div class="issue-desc">更生執行費3,000元已繳清（✅）；7/8前仍需補件到彰化地院（115年度司執消債更字第62號）：提出壽險公會（中華民國人壽保險商業同業公會）查詢結果表，並附繳費收據</div>
+            <div class="issue-action" style="background:#fef9e7;color:#d4ac0d;">7/8前補件</div>
           </li>
         </ul>
       </div>
@@ -496,10 +496,10 @@ async function checkPw(){
           </tr>
           <tr>
             <td><strong>楊昕如</strong></td>
-            <td><span class="badge b-warn">⚠️ 補件中</span></td>
-            <td>裁定認可更生程序開始（115/6/3）＋補件函（6/22收）</td>
-            <td class="next-step">🚨 繳費單6/26到期，今日務必繳費3,000元！7/8前：①提出壽險公會查詢結果表 ②憑繳費收據向彰化地院補件（115年度司執消債更字第62號）</td>
-            <td class="note-ok">彰化地院裁定認可更生程序開始（115/6/3下午4時整）；115/6/12法院函要求文到15日內補件（①壽險公會查詢表②執行費3,000元）；事務所6/22收文，截止7/8；繳費單有效至115/6/26</td>
+            <td><span class="badge b-mid">更生程序（補件中）</span></td>
+            <td>已繳更生執行費3,000元（✅）；7/8前補件截止</td>
+            <td class="next-step">7/8前向彰化地院補件（115年度司執消債更字第62號）：提出壽險公會查詢結果表＋繳費收據</td>
+            <td class="note-ok">彰化地院裁定認可更生程序開始（115/6/3下午4時整）；115/6/12法院函要求文到15日內補件；事務所6/22收文，截止7/8；執行費3,000元已繳清（6/25）</td>
           </tr>
           <!-- 等待裁定開始（最近有動作的排最上面） -->
           <tr class="group-row"><td colspan="5">▌ 等待裁定開始</td></tr>
@@ -541,9 +541,9 @@ async function checkPw(){
           <tr>
             <td><strong>蔡淑暖</strong></td>
             <td><span class="badge b-file">等待裁定通過</span></td>
-            <td>5/27補件函（債務證明）＋訊問（115/6/24已請假）</td>
-            <td class="next-step">等法院訊問後裁定結果；確認5/27補件要求（和潤企業等債務證明）是否已提出</td>
-            <td class="note-ok">115年度消債更字第42號（彰化地院和股）；調解不成立(114/12/16)；115/5/27法院要求10日內提出和潤企業、蔡長發、游佳文間債務證明；115/6/24訊問（律師已請假）</td>
+            <td>陳報(五)（補正已完成）</td>
+            <td class="next-step">等待法院裁定開始更生程序</td>
+            <td class="note-ok">115年度消債更字第42號（彰化地院和股）；調解不成立(114/12/16)；5/27法院要求補件（和潤企業等債務證明）已完成；6/24訊問（已請假）；已送陳報(五)</td>
           </tr>
           <tr>
             <td><strong>盧立偉</strong></td>
