@@ -297,13 +297,55 @@
   </style>
 </head>
 <body>
-<style>#pw-overlay{position:fixed;inset:0;background:#1a1a2e;z-index:99999;display:flex;align-items:center;justify-content:center}#pw-box{background:#fff;border-radius:12px;padding:40px 36px;text-align:center;width:320px}#pw-input{width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem}#pw-btn{margin-top:12px;width:100%;padding:11px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;cursor:pointer}#pw-err{color:#e74c3c;font-size:.85rem;margin-top:8px;min-height:20px}</style><div id="pw-overlay"><div id="pw-box"><h2>⚖️ 律師事務所</h2><p>案件追蹤系統・請輸入密碼</p><input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()"><button id="pw-btn" onclick="checkPw()">進入</button><div id="pw-err"></div></div></div><script>(function(){if(sessionStorage.getItem('case_auth')==='1'){document.addEventListener('DOMContentLoaded',function(){var o=document.getElementById('pw-overlay');if(o)o.remove();});}})();async function checkPw(){var v=document.getElementById('pw-input').value;var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');if(hex==='07334386287751ba02a4588c1a0875dbd074a61bd9e6ab7c48d244eacd0c99e0'){sessionStorage.setItem('case_auth','1');document.getElementById('pw-overlay').remove();}else{document.getElementById('pw-err').textContent='密碼錯誤，請再試一次';document.getElementById('pw-input').value='';document.getElementById('pw-input').focus();}}</script>
+<style>
+#pw-overlay{position:fixed;inset:0;background:#1a1a2e;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:sans-serif}
+#pw-box{background:#fff;border-radius:12px;padding:40px 36px;text-align:center;width:320px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+#pw-box h2{margin:0 0 8px;color:#1a1a2e;font-size:1.3rem}
+#pw-box p{color:#666;font-size:.9rem;margin:0 0 24px}
+#pw-input{width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none}
+#pw-input:focus{border-color:#4a90d9}
+#pw-btn{margin-top:12px;width:100%;padding:11px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}
+#pw-btn:hover{background:#2d2d5e}
+#pw-err{color:#e74c3c;font-size:.85rem;margin-top:8px;min-height:20px}
+</style>
+<div id="pw-overlay">
+  <div id="pw-box">
+    <h2>⚖️ 律師事務所</h2>
+    <p>案件追蹤系統・請輸入密碼</p>
+    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key===&#39;Enter&#39;)checkPw()">
+    <button id="pw-btn" onclick="checkPw()">進入</button>
+    <div id="pw-err"></div>
+  </div>
+</div>
+<script>
+(function(){
+  if(sessionStorage.getItem(&#39;case_auth&#39;)===&#39;1&#39;){
+    document.addEventListener(&#39;DOMContentLoaded&#39;,function(){
+      var o=document.getElementById(&#39;pw-overlay&#39;);
+      if(o)o.remove();
+    });
+  }
+})();
+async function checkPw(){
+  var v=document.getElementById(&#39;pw-input&#39;).value;
+  var buf=await crypto.subtle.digest(&#39;SHA-256&#39;,new TextEncoder().encode(v));
+  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,&#39;0&#39;)).join(&#39;&#39;);
+  if(hex==='07334386287751ba02a4588c1a0875dbd074a61bd9e6ab7c48d244eacd0c99e0'){
+    sessionStorage.setItem('case_auth','1');
+    document.getElementById('pw-overlay').remove();
+  }else{
+    document.getElementById('pw-err').textContent='密碼錯誤，請再試一次';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+</script>
 
 
 <header>
   <div>
     <h1>⚖️ 債清案件追蹤表</h1>
-    <div class="meta">最後更新：2026-06-23　｜　由 Claude 協助管理</div>
+    <div class="meta">最後更新：2026-06-25　｜　由 Claude 協助管理</div>
   </div>
   <div class="stats">
     <div class="stat-box">
@@ -364,9 +406,9 @@
         </div>
         <ul class="issue-list">
           <li>
-            <div class="issue-name">楊昕如 ⚠️</div>
-            <div class="issue-desc">7/8前補件到彰化地院（115年度司執消債更字第62號）：①提出壽險公會查詢結果表 ②預納更生執行費 3,000元（注意：繳費單有效期限6/26，建議盡早繳費或向法院申請新繳費單）</div>
-            <div class="issue-action" style="background:#fdedec;color:#c0392b;">⚠️ 7/8截止</div>
+            <div class="issue-name">楊昕如 🚨</div>
+            <div class="issue-desc">【🚨 繳費單明天（6/26）到期！今天務必繳費！】 彰化地院更生執行費3,000元繳費單有效至115/6/26，請即日繳費（合作金庫、便利商店均可）；7/8前補件到彰化地院（115年度司執消債更字第62號）：①提出壽險公會查詢結果表 ②預納更生執行費3,000元繳費收據</div>
+            <div class="issue-action" style="background:#fdedec;color:#c0392b;">🚨 今日繳費！</div>
           </li>
         </ul>
       </div>
@@ -448,9 +490,16 @@
           <tr>
             <td><strong>陳炎嘉</strong></td>
             <td><span class="badge b-mid">更生程序</span></td>
-            <td>債權表（115/6/10）</td>
-            <td class="next-step">陳報(四)</td>
-            <td class="note-ok">115/6/10 收到債權表；確認更生執行費已繳清</td>
+            <td>彰化地院函（115/6/22收）：新增債權聲請遭駁回</td>
+            <td class="next-step">儘速依確定債權表向彰化地院提出更生方案（115年度司執消債更字第32號）；陳報(四)</td>
+            <td class="note-ok">115/6/10 收到債權表；確認更生執行費已繳清；115/6/16法院函（6/22收）：新增債權聲請因已逾補報期限，無從准許；法院要求儘速提出更生方案</td>
+          </tr>
+          <tr>
+            <td><strong>楊昕如</strong></td>
+            <td><span class="badge b-warn">⚠️ 補件中</span></td>
+            <td>裁定認可更生程序開始（115/6/3）＋補件函（6/22收）</td>
+            <td class="next-step">🚨 繳費單6/26到期，今日務必繳費3,000元！7/8前：①提出壽險公會查詢結果表 ②憑繳費收據向彰化地院補件（115年度司執消債更字第62號）</td>
+            <td class="note-ok">彰化地院裁定認可更生程序開始（115/6/3下午4時整）；115/6/12法院函要求文到15日內補件（①壽險公會查詢表②執行費3,000元）；事務所6/22收文，截止7/8；繳費單有效至115/6/26</td>
           </tr>
           <!-- 等待裁定開始（最近有動作的排最上面） -->
           <tr class="group-row"><td colspan="5">▌ 等待裁定開始</td></tr>
@@ -492,16 +541,9 @@
           <tr>
             <td><strong>蔡淑暖</strong></td>
             <td><span class="badge b-file">等待裁定通過</span></td>
-            <td>陳報(四)</td>
-            <td class="next-step">等待更生裁定開始</td>
-            <td class="note-ok">調解不成立(114/12/16)</td>
-          </tr>
-          <tr>
-            <td><strong>楊昕如</strong></td>
-            <td><span class="badge b-warn">⚠️ 補件中</span></td>
-            <td>更生裁定開始通知（115/6/22收）</td>
-            <td class="next-step">⚠️ 7/8前：①提出壽險公會查詢結果表 ②預納更生執行費3,000元到彰化地院（115年度司執消債更字第62號）；繳費單有效至6/26，建議盡早繳費</td>
-            <td class="note-ok">彰化地院115/6/3裁定更生程序開始；115/6/12法院函要求文到15日內補件；事務所6/22收文，截止7/8</td>
+            <td>5/27補件函（債務證明）＋訊問（115/6/24已請假）</td>
+            <td class="next-step">等法院訊問後裁定結果；確認5/27補件要求（和潤企業等債務證明）是否已提出</td>
+            <td class="note-ok">115年度消債更字第42號（彰化地院和股）；調解不成立(114/12/16)；115/5/27法院要求10日內提出和潤企業、蔡長發、游佳文間債務證明；115/6/24訊問（律師已請假）</td>
           </tr>
           <tr>
             <td><strong>盧立偉</strong></td>
@@ -651,7 +693,7 @@
         「莊美滿 陳報二已找到並掃描上傳」
       </div>
       <div style="margin-top:12px">
-        <span class="update-badge">最後更新：2026-06-23（新增黃麗綾；更新楊昕如補件截止、張湘棋/曾俊明庭期、黃文虹抗告、柯媛齡調解、邱明志轉更生）</span>
+        <span class="update-badge">最後更新：2026-06-25（楊昕如移至更生程序進行中分組；蔡淑暖更新6/24訊問已請假及5/27補件要求）</span>
         <span style="color:#aaa;font-size:13px;margin-left:12px;">每次更新後請告知 Claude 修改日期</span>
       </div>
     </div>
@@ -660,7 +702,7 @@
 </main>
 
 <footer>
-  債清案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-04-14
+  債清案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-06-25
 </footer>
 
 </body>

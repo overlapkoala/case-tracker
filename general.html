@@ -198,24 +198,24 @@
   <div id="pw-box">
     <h2>⚖️ 律師事務所</h2>
     <p>案件追蹤系統・請輸入密碼</p>
-    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()">
+    <input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key===&#39;Enter&#39;)checkPw()">
     <button id="pw-btn" onclick="checkPw()">進入</button>
     <div id="pw-err"></div>
   </div>
 </div>
 <script>
 (function(){
-  if(sessionStorage.getItem('case_auth')==='1'){
-    document.addEventListener('DOMContentLoaded',function(){
-      var o=document.getElementById('pw-overlay');
+  if(sessionStorage.getItem(&#39;case_auth&#39;)===&#39;1&#39;){
+    document.addEventListener(&#39;DOMContentLoaded&#39;,function(){
+      var o=document.getElementById(&#39;pw-overlay&#39;);
       if(o)o.remove();
     });
   }
 })();
 async function checkPw(){
-  var v=document.getElementById('pw-input').value;
-  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
-  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  var v=document.getElementById(&#39;pw-input&#39;).value;
+  var buf=await crypto.subtle.digest(&#39;SHA-256&#39;,new TextEncoder().encode(v));
+  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,&#39;0&#39;)).join(&#39;&#39;);
   if(hex==='07334386287751ba02a4588c1a0875dbd074a61bd9e6ab7c48d244eacd0c99e0'){
     sessionStorage.setItem('case_auth','1');
     document.getElementById('pw-overlay').remove();
@@ -233,7 +233,7 @@ async function checkPw(){
 <header>
   <div>
     <h1>⚖️ 一般案件追蹤表</h1>
-    <div class="meta">最後更新：2026-06-23　｜　由 Claude 協助管理（依中華民國法律進度排序）</div>
+    <div class="meta">最後更新：2026-06-25　｜　由 Claude 協助管理（依中華民國法律進度排序）</div>
   </div>
   <div class="stats">
     <div class="stat-box"><div class="num">35</div><div class="lbl">進行中</div></div>
@@ -247,13 +247,6 @@ async function checkPw(){
 <div class="card">
   <div class="card-header orange">⚠️ 緊急事項（近期必辦）</div>
   <div class="card-body">
-    <div class="alert-item">
-      <div class="alert-icon">🔴</div>
-      <div>
-        <div class="alert-title">【明天！6/24 上午9:50】黃新丁 — 台中地檢署偵查庭</div>
-        <div class="alert-desc">台中市西區自由路1段91號，偵查庭／詢問室（115年度偵字第9936號，交通致傷逃等）。請至自動報到機報到。</div>
-      </div>
-    </div>
     <div class="alert-item">
       <div class="alert-icon">🟠</div>
       <div>
@@ -284,20 +277,20 @@ async function checkPw(){
   <div class="card-body">
 
     <div class="court-item">
-      <div class="court-date urgent"><div class="day">24</div><div class="month">6月</div></div>
-      <div class="court-info">
-        <div class="cname">黃新丁 <span style="font-size:13px;color:#c0392b;font-weight:400;">⚡ 明天！</span></div>
-        <div class="ctype">上午 9:50　｜　台中地檢署偵查庭（台中市西區自由路1段91號）<br>115年度偵字第9936號　交通致傷逃等　刑事辯護</div>
-        <span class="ctag criminal">刑事偵查</span>
-      </div>
-    </div>
-
-    <div class="court-item">
       <div class="court-date normal"><div class="day">7</div><div class="month">7月</div></div>
       <div class="court-info">
         <div class="cname">鄭坤展</div>
         <div class="ctype">下午 2:20　｜　彰化地院員林簡易庭（彰化縣員林市員林大道2段1號，第2調解室）<br>114年度彰暫調字第100號　分割共有物（對造：鄭銅釘）</div>
         <span class="ctag civil">民事調解</span>
+      </div>
+    </div>
+
+    <div class="court-item">
+      <div class="court-date normal"><div class="day">14</div><div class="month">7月</div></div>
+      <div class="court-info">
+        <div class="cname">李翼林</div>
+        <div class="ctype">下午 3:25　｜　新竹地院民事第21法庭<br>113年度重訴字第230號　給付款項（被告：和誠開發建設股份有限公司）　言詞辯論</div>
+        <span class="ctag civil">民事辯論</span>
       </div>
     </div>
 
@@ -385,10 +378,10 @@ async function checkPw(){
 
         <tr>
           <td><strong>李翼林</strong></td>
-          <td class="td-court">待確認</td>
-          <td><span class="badge b-trial">一審（調查證據）</span></td>
-          <td class="next-step">協助安排證人出庭；確認傳票送達狀況；視需要提書狀補充說明</td>
-          <td><div class="note-editable" contenteditable="true" data-key="李翼林_民事">法院命傳喚證人；刑事(告訴)部分已不起訴結案</div></td>
+          <td class="td-court">新竹地院</td>
+          <td><span class="badge b-debate">言詞辯論（7/14）</span></td>
+          <td class="next-step">7/14 下午3:25 出席新竹地院民事第21法庭續行言詞辯論（不另通知，須自行到庭）；法院已發函命第三人張素禎於6/26前提出結案書正本</td>
+          <td><div class="note-editable" contenteditable="true" data-key="李翼林_民事">113重訴字第230號；給付款項；被告：和誠開發建設；5/26已開庭（證人李涵均出庭作證，法官認為結算書可能有瑕疵）；7/14續行言詞辯論</div></td>
         </tr>
 
         <tr>
@@ -425,18 +418,18 @@ async function checkPw(){
 
         <tr>
           <td><strong>高芮棋</strong></td>
-          <td class="td-court">彰化地院</td>
-          <td><span class="badge b-trial">一審（審理中）</span></td>
-          <td class="next-step">等開庭通知；確認醫療鑑定進度</td>
-          <td><div class="note-editable" contenteditable="true" data-key="高芮棋">法扶；車損案；有秀傳醫院函及彰基收據</div></td>
+          <td class="td-court">彰化地院員林簡易庭</td>
+          <td><span class="badge b-assess">鑑定中（勞動能力）</span></td>
+          <td class="next-step">等秀傳醫院勞動能力減損鑑定結果；法院收到鑑定報告後決定後續</td>
+          <td><div class="note-editable" contenteditable="true" data-key="高芮棋">115年度員簡調字第130號；法扶；113/6/8交通事故車損案；115/6/10法院發函委託秀傳醫院鑑定勞動能力減損比率（含影像光碟及病歷），6/23收文</div></td>
         </tr>
 
         <tr>
           <td><strong>高玉美（劉志芬）</strong></td>
           <td class="td-court">新竹地院</td>
-          <td><span class="badge b-trial">一審（有鑑定）</span></td>
-          <td class="next-step">等地政鑑定及估價結果；確認鑑定報告是否已完成</td>
-          <td><div class="note-editable" contenteditable="true" data-key="高玉美">新竹湖口地政；115/2/26有開庭；已有不動產估價報告書</div></td>
+          <td><span class="badge b-trial">一審（撤回中？）</span></td>
+          <td class="next-step">確認6/23劉志芬撤回訴訟狀結果（需對造同意或法院裁定）；若撤回成立，評估是否辦理結案</td>
+          <td><div class="note-editable" contenteditable="true" data-key="高玉美">新竹湖口地政；115/2/26有開庭；已有不動產估價報告書；6/23 劉志芬撤回訴訟狀已送出</div></td>
         </tr>
 
         <tr>
@@ -530,12 +523,12 @@ async function checkPw(){
           <td><div class="note-editable" contenteditable="true" data-key="謝安江">法扶（115/6/10申請）；苗栗地檢115偵4850；詐欺被告（網購詐騙受害者）；原6/5庭期已延期</div></td>
         </tr>
 
-        <tr class="urgent-row">
+        <tr>
           <td><strong>黃新丁</strong></td>
           <td class="td-court">台中地檢署</td>
-          <td><span class="badge b-invest">偵查中（⚡ 明天）</span></td>
-          <td class="next-step urgent-next">⚡ 明天 6/24 上午9:50 出庭！台中地檢署偵查庭（自由路91號）</td>
-          <td><div class="note-editable" contenteditable="true" data-key="黃新丁">115偵字第9936號；交通致傷逃等；刑事辯護；俊億介紹，僅收2萬，剩下4萬</div></td>
+          <td><span class="badge b-invest">偵查中</span></td>
+          <td class="next-step">6/24偵查庭已過；等候下次開庭通知</td>
+          <td><div class="note-editable" contenteditable="true" data-key="黃新丁">115偵字第9936號；交通致傷逃等；刑事辯護；俊億介紹，僅收2萬，剩下4萬；6/24已出庭</div></td>
         </tr>
 
         <tr>
@@ -603,7 +596,7 @@ async function checkPw(){
           <td class="td-court">待確認</td>
           <td><span class="badge b-exec">強制執行</span></td>
           <td class="next-step">確認執行法院進度；追蹤提存所及債務人財產狀況</td>
-          <td><div class="note-editable" contenteditable="true" data-key="高進財_強執">民事案已結案（判決確定）；現進入強制執行階段；有提存所函</div></td>
+          <td><div class="note-editable" contenteditable="true" data-key="高進財_強執">民事案已結案（判決確定）；現進入強制執行階段；114存字第2220號清償提存，提存物100萬元（受取權人：誠基建設）已被臺中地院執行處扣押收取，餘額886,405元（115/6/18提存所函，6/22收）</div></td>
         </tr>
 
         <tr>
@@ -720,7 +713,7 @@ async function checkPw(){
       「新增開庭：○○○，X月X日 上午X時，○○法院」
     </div>
     <div style="margin-top:12px">
-      <span class="update-badge">最後更新：2026-06-23（依硬碟文件全面重整，依中華民國法律進度排序）</span>
+      <span class="update-badge">最後更新：2026-06-25（高玉美/劉志芬更新：6/23撤回訴訟狀已送；蔡淑暖訊問進度更新；楊昕如移至更生程序進行中）</span>
     </div>
   </div>
 </div>
@@ -728,7 +721,7 @@ async function checkPw(){
 </main>
 
 <footer>
-  一般案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-06-23
+  一般案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-06-25
 </footer>
 
 <script>
