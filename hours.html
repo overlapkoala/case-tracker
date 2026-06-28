@@ -39,7 +39,6 @@
       display: flex; align-items: center; gap: 8px;
       border-bottom: 1px solid #f0f0f0;
     }
-    .card-header.red    { background: #fff5f5; color: #c0392b; border-color: #fdd; }
     .card-header.orange { background: #fff8f0; color: #d35400; border-color: #fde8cc; }
     .card-header.blue   { background: #f0f6ff; color: #1a5a9a; border-color: #d0e4f7; }
     .card-header.gray   { background: #f7f7f7; color: #555;    border-color: #e8e8e8; }
@@ -61,10 +60,8 @@
     .hours-table td.left { text-align: left; }
     .hours-table tr:hover td { background: #fafcff; }
 
-    /* 公司名稱欄 */
     .company-name { font-weight: 700; font-size: 14px; }
 
-    /* 時數欄 */
     .hours-num { font-size: 18px; font-weight: 700; color: #1a5a9a; }
     .hours-used { color: #666; }
     .hours-remain { font-weight: 700; }
@@ -72,13 +69,11 @@
     .remain-low  { color: #e67e22; }
     .remain-zero { color: #c0392b; }
 
-    /* 到期日 */
     .date-cell { white-space: nowrap; font-size: 13px; }
     .date-urgent { color: #c0392b; font-weight: 700; }
     .date-soon   { color: #d35400; font-weight: 600; }
     .date-ok     { color: #555; }
 
-    /* 標籤 */
     .badge {
       display: inline-block; border-radius: 20px;
       padding: 3px 10px; font-size: 12px; font-weight: 600; white-space: nowrap;
@@ -88,7 +83,7 @@
     .badge.renewed  { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
     .badge.active   { background: #e8f4fb; color: #1a5a9a; }
 
-    /* 備註欄 */
+    /* 可編輯備註 */
     .note-editable {
       min-height: 24px; padding: 4px 8px;
       border-radius: 6px; border: 1.5px solid transparent;
@@ -100,13 +95,19 @@
     .note-editable:focus  { outline: none; background: #f0f7ff; border-color: #4a6fa5; }
     .note-editable.empty::before { content: attr(data-placeholder); color: #ccc; pointer-events: none; }
 
+    /* 已使用時數選單 */
+    .hours-select {
+      border: 1.5px solid #c5d5e8; border-radius: 6px;
+      padding: 5px 6px; font-size: 14px; font-weight: 600;
+      background: #f4f8ff; cursor: pointer; color: #1a5a9a; width: 80px;
+      transition: border-color .2s, background .2s;
+    }
+    .hours-select:hover  { border-color: #4a6fa5; background: #e8f0ff; }
+    .hours-select:focus  { outline: none; border-color: #1a5a9a; background: white; }
+
     /* 進度條 */
-    .progress-bar {
-      height: 6px; background: #e9ecef; border-radius: 3px; margin-top: 6px;
-    }
-    .progress-fill {
-      height: 100%; border-radius: 3px; transition: width .3s;
-    }
+    .progress-bar { height: 6px; background: #e9ecef; border-radius: 3px; margin-top: 6px; }
+    .progress-fill { height: 100%; border-radius: 3px; transition: width .4s; }
     .fill-ok   { background: #27ae60; }
     .fill-mid  { background: #f0b429; }
     .fill-high { background: #e74c3c; }
@@ -119,10 +120,10 @@
       display: inline-block; font-size: 12px; font-weight: 700;
       padding: 2px 8px; border-radius: 4px; white-space: nowrap;
     }
-    .closed-tag.expired    { background: #fce4e4; color: #c0392b; }
-    .closed-tag.no-renew   { background: #fce4e4; color: #c0392b; }
+    .closed-tag.expired  { background: #fce4e4; color: #c0392b; }
+    .closed-tag.no-renew { background: #fce4e4; color: #c0392b; }
 
-    /* 即將到期提醒卡 */
+    /* 注意事項 */
     .alert-row {
       display: flex; align-items: flex-start; gap: 14px;
       padding: 12px 0; border-bottom: 1px solid #fde8cc;
@@ -135,7 +136,7 @@
     .alert-days.warn { background: #e67e22; }
     .alert-days .num { font-size: 20px; font-weight: 700; line-height: 1; }
     .alert-days .lbl { font-size: 10px; }
-    .alert-info .aname { font-weight: 700; font-size: 15px; }
+    .alert-info .aname   { font-weight: 700; font-size: 15px; }
     .alert-info .adetail { font-size: 13px; color: #666; margin-top: 3px; }
 
     /* 儲存提示 */
@@ -147,6 +148,8 @@
       transition: opacity .3s, transform .3s; z-index: 999; pointer-events: none;
     }
     .save-toast.show { opacity: 1; transform: translateY(0); }
+
+    .no-alert { color: #aaa; text-align: center; padding: 16px; font-size: 14px; }
 
     footer { text-align: center; padding: 24px; color: #aaa; font-size: 13px; }
 
@@ -183,7 +186,7 @@ async function checkPw(){
 </script>
 
 
-<div class="save-toast" id="saveToast">✓ 備註已儲存</div>
+<div class="save-toast" id="saveToast">✓ 已儲存</div>
 
 <header>
   <div>
@@ -196,8 +199,8 @@ async function checkPw(){
       <div class="lbl">進行中合約</div>
     </div>
     <div class="stat-box">
-      <div class="num">76.5</div>
-      <div class="lbl">合約總時數</div>
+      <div class="num" id="stat-remain">—</div>
+      <div class="lbl">合計剩餘時數</div>
     </div>
     <div class="stat-box">
       <div class="num">3</div>
@@ -208,60 +211,11 @@ async function checkPw(){
 
 <main>
 
-<!-- ── 即將到期提醒 ── -->
+<!-- ── 注意事項（動態產生）── -->
 <div class="card">
   <div class="card-header orange">⏰ 注意事項（即將到期 / 時數不足）</div>
-  <div class="card-body">
-    <div class="alert-row">
-      <div class="alert-days">
-        <div class="num">33</div>
-        <div class="lbl">天後到期</div>
-      </div>
-      <div class="alert-info">
-        <div class="aname">康翔科技股份有限公司</div>
-        <div class="adetail">到期日：115/7/31　｜　合約15小時　｜　已使用0小時，剩餘15小時　｜　⚠️ 請提前確認是否續約</div>
-      </div>
-    </div>
-    <div class="alert-row">
-      <div class="alert-days warn">
-        <div class="num">64</div>
-        <div class="lbl">天後到期</div>
-      </div>
-      <div class="alert-info">
-        <div class="aname">四進有限公司</div>
-        <div class="adetail">到期日：115/8/31　｜　合約5小時　｜　已使用3.3小時，剩餘1.7小時</div>
-      </div>
-    </div>
-    <div class="alert-row">
-      <div class="alert-days" style="background:#c0392b;">
-        <div class="num">1</div>
-        <div class="lbl">小時剩餘</div>
-      </div>
-      <div class="alert-info">
-        <div class="aname">🔴 三富全球企業有限公司</div>
-        <div class="adetail">到期日：115/9/30　｜　合約5小時　｜　已使用4小時，<strong style="color:#c0392b;">剩餘1小時 — 時數不足，請確認是否追加或續約</strong></div>
-      </div>
-    </div>
-    <div class="alert-row">
-      <div class="alert-days" style="background:#c0392b;">
-        <div class="num">1</div>
-        <div class="lbl">小時剩餘</div>
-      </div>
-      <div class="alert-info">
-        <div class="aname">🔴 達仁地產有限公司</div>
-        <div class="adetail">到期日：115/9/30　｜　合約5小時　｜　已使用4小時，<strong style="color:#c0392b;">剩餘1小時 — 時數不足，請確認是否追加或續約</strong></div>
-      </div>
-    </div>
-    <div class="alert-row">
-      <div class="alert-days" style="background:#c0392b;">
-        <div class="num">0.5</div>
-        <div class="lbl">小時剩餘</div>
-      </div>
-      <div class="alert-info">
-        <div class="aname">🔴 開溜有限公司</div>
-        <div class="adetail">到期日：116/2/28　｜　合約5小時　｜　已使用4.5小時，<strong style="color:#c0392b;">剩餘0.5小時 — 時數嚴重不足，請確認是否追加或續約</strong></div>
-      </div>
-    </div>
+  <div class="card-body" id="alerts-container" style="padding-top:6px;padding-bottom:6px;">
+    <!-- 由 JS 動態產生 -->
   </div>
 </div>
 
@@ -276,14 +230,13 @@ async function checkPw(){
           <th style="min-width:70px;">合約時數</th>
           <th style="min-width:160px;">合約期間</th>
           <th style="min-width:90px;">到期日</th>
-          <th style="min-width:80px;">已使用</th>
+          <th style="min-width:100px;">已使用　▼</th>
           <th style="min-width:90px;">剩餘時數</th>
           <th class="left" style="min-width:260px;">備註（可點擊編輯）</th>
         </tr>
       </thead>
       <tbody>
 
-        <!-- 康翔 - 33天後到期 → 剩15/15=100% -->
         <tr>
           <td class="left">
             <div class="company-name">康翔科技股份有限公司</div>
@@ -292,15 +245,14 @@ async function checkPw(){
           <td><span class="hours-num">15</span></td>
           <td class="date-cell">114/8/1 至 115/7/31</td>
           <td class="date-cell date-urgent">115/7/31</td>
-          <td class="hours-used">0</td>
+          <td><select class="hours-select" id="sel-康翔科技" onchange="onUsedChange('康翔科技',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-ok">15</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:100%"></div></div>
+            <span id="remain-康翔科技" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-康翔科技" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="康翔科技" data-placeholder="點此輸入備註…"></div></td>
         </tr>
 
-        <!-- 四進 - 64天後到期 → 剩1.7/5=34% -->
         <tr>
           <td class="left">
             <div class="company-name">四進有限公司</div>
@@ -309,85 +261,80 @@ async function checkPw(){
           <td><span class="hours-num">5</span></td>
           <td class="date-cell">114/9/1 至 115/8/31</td>
           <td class="date-cell date-soon">115/8/31</td>
-          <td class="hours-used">3.3</td>
+          <td><select class="hours-select" id="sel-四進有限公司" onchange="onUsedChange('四進有限公司',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-low">1.7</span>
-            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:34%"></div></div>
+            <span id="remain-四進有限公司" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-四進有限公司" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="四進有限公司">1.3存函、1.5書狀、0.5請假狀</div></td>
         </tr>
 
-        <!-- 三富全球 → 剩1/5=20% -->
         <tr>
           <td class="left"><div class="company-name">三富全球企業有限公司</div></td>
           <td><span class="hours-num">5</span></td>
           <td class="date-cell">114/10/1 至 115/9/30</td>
           <td class="date-cell date-ok">115/9/30</td>
-          <td class="hours-used">4</td>
+          <td><select class="hours-select" id="sel-三富全球企業" onchange="onUsedChange('三富全球企業',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-zero">1</span>
-            <div class="progress-bar"><div class="progress-fill fill-high" style="width:20%"></div></div>
+            <span id="remain-三富全球企業" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-三富全球企業" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="三富全球企業">0.5問題、2.5書狀、2契約</div></td>
         </tr>
 
-        <!-- 達仁地產 → 剩1/5=20% -->
         <tr>
           <td class="left"><div class="company-name">達仁地產有限公司</div></td>
           <td><span class="hours-num">5</span></td>
           <td class="date-cell">114/10/1 至 115/9/30</td>
           <td class="date-cell date-ok">115/9/30</td>
-          <td class="hours-used">4</td>
+          <td><select class="hours-select" id="sel-達仁地產" onchange="onUsedChange('達仁地產',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-zero">1</span>
-            <div class="progress-bar"><div class="progress-fill fill-high" style="width:20%"></div></div>
+            <span id="remain-達仁地產" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-達仁地產" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="達仁地產">1.5書狀、2.5契約</div></td>
         </tr>
 
-        <!-- 鼎旺營造 → 剩16.5/20=82.5% -->
         <tr>
           <td class="left"><div class="company-name">鼎旺營造股份有限公司</div></td>
           <td><span class="hours-num">20</span></td>
           <td class="date-cell">114/12/1 至 115/11/30</td>
           <td class="date-cell date-ok">115/11/30</td>
-          <td class="hours-used">3.5</td>
+          <td><select class="hours-select" id="sel-鼎旺營造" onchange="onUsedChange('鼎旺營造',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-ok">16.5</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:82.5%"></div></div>
+            <span id="remain-鼎旺營造" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-鼎旺營造" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="鼎旺營造">詳附件</div></td>
         </tr>
 
-        <!-- 賊活再續 → 剩4/6.5=61.5% -->
         <tr>
           <td class="left"><div class="company-name">賊活再續有限公司</div></td>
           <td><span class="hours-num">6.5</span></td>
           <td class="date-cell">115/1/1 至 115/12/31</td>
           <td class="date-cell date-ok">115/12/31</td>
-          <td class="hours-used">2.5</td>
+          <td><select class="hours-select" id="sel-賊活再續" onchange="onUsedChange('賊活再續',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-ok">4</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:61.5%"></div></div>
+            <span id="remain-賊活再續" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-賊活再續" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="賊活再續">2.5協議書</div></td>
         </tr>
 
-        <!-- 傑睿悍修俱 → 剩4/5=80% -->
         <tr>
           <td class="left"><div class="company-name">傑睿悍修俱股份有限公司</div></td>
           <td><span class="hours-num">5</span></td>
           <td class="date-cell">115/1/1 至 115/12/31</td>
           <td class="date-cell date-ok">115/12/31</td>
-          <td class="hours-used">1</td>
+          <td><select class="hours-select" id="sel-傑睿悍修俱" onchange="onUsedChange('傑睿悍修俱',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-ok">4</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:80%"></div></div>
+            <span id="remain-傑睿悍修俱" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-傑睿悍修俱" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="傑睿悍修俱">2契約 1洽談（有協議加一）</div></td>
         </tr>
 
-        <!-- 京珀彩妝 → 有再續約，剩5/5=100% -->
+        <!-- 京珀彩妝：特殊情況（已續約），維持靜態顯示 -->
         <tr>
           <td class="left">
             <div class="company-name">京珀彩妝有限公司</div>
@@ -404,21 +351,19 @@ async function checkPw(){
           <td><div class="note-editable" contenteditable="true" data-key="京珀彩妝">2契約 2契約 1授權書；有再續約</div></td>
         </tr>
 
-        <!-- 港灣生活家 → 剩2/5=40% -->
         <tr>
           <td class="left"><div class="company-name">港灣生活家股份有限公司</div></td>
           <td><span class="hours-num">5</span></td>
           <td class="date-cell">115/2/1 至 116/1/31</td>
           <td class="date-cell date-ok">116/1/31</td>
-          <td class="hours-used">3</td>
+          <td><select class="hours-select" id="sel-港灣生活家" onchange="onUsedChange('港灣生活家',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-low">2</span>
-            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:40%"></div></div>
+            <span id="remain-港灣生活家" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-港灣生活家" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="港灣生活家">1忠漢　2小時kaven</div></td>
         </tr>
 
-        <!-- 勝輝實業（續約版）→ 剩4.5/6=75% -->
         <tr>
           <td class="left">
             <div class="company-name">勝輝實業有限公司</div>
@@ -427,38 +372,36 @@ async function checkPw(){
           <td><span class="hours-num">5+1</span></td>
           <td class="date-cell">115/2/1 至 116/1/31</td>
           <td class="date-cell date-ok">116/1/31</td>
-          <td class="hours-used">1.5</td>
+          <td><select class="hours-select" id="sel-勝輝實業_續" onchange="onUsedChange('勝輝實業_續',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-ok">4.5</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:75%"></div></div>
+            <span id="remain-勝輝實業_續" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-勝輝實業_續" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="勝輝實業_續">1.5書狀</div></td>
         </tr>
 
-        <!-- 開溜 → 剩0.5/5=10% -->
         <tr>
           <td class="left"><div class="company-name">開溜有限公司</div></td>
           <td><span class="hours-num">5</span></td>
           <td class="date-cell">115/3/1 至 116/2/28</td>
           <td class="date-cell date-ok">116/2/28</td>
-          <td class="hours-used">4.5</td>
+          <td><select class="hours-select" id="sel-開溜有限公司" onchange="onUsedChange('開溜有限公司',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-zero">0.5</span>
-            <div class="progress-bar"><div class="progress-fill fill-high" style="width:10%"></div></div>
+            <span id="remain-開溜有限公司" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-開溜有限公司" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="開溜有限公司">0.5回復 0.25回復 2.25審約 1.5審約</div></td>
         </tr>
 
-        <!-- 劉政昕 → 剩4.5/5=90% -->
         <tr>
           <td class="left"><div class="company-name">劉政昕</div></td>
           <td><span class="hours-num">5</span></td>
           <td class="date-cell" style="color:#aaa;">—</td>
           <td class="date-cell" style="color:#aaa;">—</td>
-          <td class="hours-used">0.5</td>
+          <td><select class="hours-select" id="sel-劉政昕" onchange="onUsedChange('劉政昕',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-ok">4.5</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:90%"></div></div>
+            <span id="remain-劉政昕" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-劉政昕" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="劉政昕">0.5回復</div></td>
         </tr>
@@ -468,7 +411,7 @@ async function checkPw(){
   </div>
 </div>
 
-<!-- ── 未續約 / 已到期 ── -->
+<!-- ── 未續約 ── -->
 <div class="card">
   <div class="card-header gray">🗂 未續約 / 已到期（3件）</div>
   <div class="card-body" style="padding:0;overflow-x:auto;">
@@ -486,40 +429,33 @@ async function checkPw(){
         </tr>
       </thead>
       <tbody>
-
         <tr>
           <td class="left"><div class="company-name">勝佑精密工業有限公司</div></td>
           <td>5</td>
           <td class="date-cell">114/4/1 至 115/3/31</td>
           <td class="date-cell">115/3/31</td>
-          <td>2.5</td>
-          <td>2.5</td>
+          <td>2.5</td><td>2.5</td>
           <td><div class="note-editable" contenteditable="true" data-key="勝佑精密">2.5協議書、聲明書；(未確定時數)協議</div></td>
           <td><span class="closed-tag no-renew">未續約！</span></td>
         </tr>
-
         <tr>
           <td class="left"><div class="company-name">勝輝實業有限公司</div></td>
           <td>5</td>
           <td class="date-cell">114/1/1 至 114/12/31</td>
           <td class="date-cell">114/12/31</td>
-          <td>4</td>
-          <td>1</td>
+          <td>4</td><td>1</td>
           <td><div class="note-editable" contenteditable="true" data-key="勝輝實業_舊">1.5書狀、0.5存函、0.5存函、1.5書狀</div></td>
           <td><span class="closed-tag expired">到期！</span></td>
         </tr>
-
         <tr>
           <td class="left"><div class="company-name">兩兩探戈美學顧問有限公司</div></td>
           <td>5</td>
           <td class="date-cell">114/1/1 至 114/12/31</td>
           <td class="date-cell">114/12/31</td>
-          <td>3.3</td>
-          <td>1</td>
+          <td>3.3</td><td>1</td>
           <td><div class="note-editable" contenteditable="true" data-key="兩兩探戈">0.8諮詢、2.5契約、0.2詢問問題、0.5問問題</div></td>
           <td><span class="closed-tag expired">到期！</span></td>
         </tr>
-
       </tbody>
     </table>
   </div>
@@ -530,15 +466,16 @@ async function checkPw(){
   <div class="card-header green">💡 如何更新</div>
   <div class="card-body">
     <div style="background:#f0f6ff;border-left:4px solid #2d6a9f;border-radius:0 10px 10px 0;padding:14px 18px;font-size:14px;line-height:1.8;color:#444;">
-      <strong style="color:#1a5a9a;">備註欄：直接在網頁上點擊就能打字，自動儲存在這台電腦。</strong><br><br>
-      <strong>其他更新請告訴 Claude，例如：</strong><br>
-      「康翔科技已使用2小時，備註：審閱勞動契約」<br>
-      「勝輝實業已續約，新合約 116/2/1 至 117/1/31，5小時」<br>
+      <strong style="color:#1a5a9a;">✅ 直接在網頁操作：</strong><br>
+      • <strong>已使用時數</strong>：點選「▼」下拉選單，選擇新的時數，剩餘時數與進度條會自動更新<br>
+      • <strong>備註欄</strong>：直接點擊文字欄位即可輸入，自動儲存在這台電腦<br><br>
+      <strong style="color:#1a5a9a;">📩 其他更新請告訴 Claude：</strong><br>
       「新增顧問：○○公司，合約X小時，期間X至X」<br>
-      「勝佑精密移除未續約，已重新簽約」
+      「勝佑精密移除未續約，已重新簽約」<br>
+      「合約時數追加：三富全球增加5小時」
     </div>
     <div style="margin-top:12px">
-      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-06-28（初版建立）</span>
+      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-06-28</span>
     </div>
   </div>
 </div>
@@ -550,32 +487,188 @@ async function checkPw(){
 </footer>
 
 <script>
-  const STORAGE_PREFIX = 'legal_hours_v1_';
-  const toast = document.getElementById('saveToast');
-  let toastTimer;
+// ─── 各公司資料 ───────────────────────────────────────────
+const COMPANY_DATA = {
+  '康翔科技':    { name: '康翔科技股份有限公司',    contract: 15,  initUsed: 0,   expiry: '115/7/31'  },
+  '四進有限公司': { name: '四進有限公司',           contract: 5,   initUsed: 3.3, expiry: '115/8/31'  },
+  '三富全球企業': { name: '三富全球企業有限公司',    contract: 5,   initUsed: 4,   expiry: '115/9/30'  },
+  '達仁地產':    { name: '達仁地產有限公司',         contract: 5,   initUsed: 4,   expiry: '115/9/30'  },
+  '鼎旺營造':    { name: '鼎旺營造股份有限公司',     contract: 20,  initUsed: 3.5, expiry: '115/11/30' },
+  '賊活再續':    { name: '賊活再續有限公司',         contract: 6.5, initUsed: 2.5, expiry: '115/12/31' },
+  '傑睿悍修俱':  { name: '傑睿悍修俱股份有限公司',  contract: 5,   initUsed: 1,   expiry: '115/12/31' },
+  '港灣生活家':  { name: '港灣生活家股份有限公司',   contract: 5,   initUsed: 3,   expiry: '116/1/31'  },
+  '勝輝實業_續': { name: '勝輝實業有限公司（續）',   contract: 6,   initUsed: 1.5, expiry: '116/1/31'  },
+  '開溜有限公司': { name: '開溜有限公司',            contract: 5,   initUsed: 4.5, expiry: '116/2/28'  },
+  '劉政昕':      { name: '劉政昕',                   contract: 5,   initUsed: 0.5, expiry: '—'         },
+};
 
-  function showToast() {
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+// 到期日提醒（固定，不因時數選單而改變）
+const DATE_ALERTS = [
+  { days: 33,  warn: false, name: '康翔科技股份有限公司', expiry: '115/7/31', note: '合約15小時　｜　⚠️ 請提前確認是否續約' },
+  { days: 64,  warn: true,  name: '四進有限公司',         expiry: '115/8/31', note: '合約5小時' },
+];
+
+const NOTE_PREFIX = 'legal_hours_v1_';
+const USED_PREFIX = 'legal_used_v1_';
+const LOW_THRESHOLD = 1;  // 剩餘時數 ≤ 此值就顯示警示
+
+// ─── localStorage 讀寫 ────────────────────────────────────
+function getUsed(key) {
+  const s = localStorage.getItem(USED_PREFIX + key);
+  return s !== null ? parseFloat(s) : COMPANY_DATA[key].initUsed;
+}
+function setUsed(key, val) {
+  localStorage.setItem(USED_PREFIX + key, String(val));
+}
+
+// ─── 產生選單選項 ─────────────────────────────────────────
+function buildSelect(key) {
+  const data = COMPANY_DATA[key];
+  const used = getUsed(key);
+  const options = new Set();
+  for (let v = 0; v <= data.contract + 0.001; v = Math.round((v + 0.5) * 10) / 10) {
+    options.add(Math.round(v * 10) / 10);
+  }
+  options.add(Math.round(used * 10) / 10);  // 確保現有值也在選單中
+
+  const sel = document.getElementById('sel-' + key);
+  if (!sel) return;
+  sel.innerHTML = '';
+  [...options].sort((a, b) => a - b).forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v;
+    opt.textContent = v;
+    if (v === used) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+// ─── 更新某一列的剩餘時數與進度條 ────────────────────────
+function updateRow(key) {
+  const data = COMPANY_DATA[key];
+  const used = getUsed(key);
+  const remaining = Math.max(0, Math.round((data.contract - used) * 10) / 10);
+  const pct = Math.min(100, Math.max(0, (remaining / data.contract) * 100));
+
+  const remainEl = document.getElementById('remain-' + key);
+  if (remainEl) {
+    remainEl.textContent = remaining;
+    remainEl.className = 'hours-remain ' +
+      (remaining > 2 ? 'remain-ok' : remaining > 0 ? 'remain-low' : 'remain-zero');
+    if (remaining <= 1) remainEl.className = 'hours-remain remain-zero';
   }
 
-  function updateEmptyClass(el) {
-    el.classList.toggle('empty', el.textContent.trim() === '');
+  const barEl = document.getElementById('bar-' + key);
+  if (barEl) {
+    barEl.style.width = pct + '%';
+    barEl.className = 'progress-fill ' +
+      (pct > 50 ? 'fill-ok' : pct > 25 ? 'fill-mid' : 'fill-high');
+  }
+}
+
+// ─── 選單變更事件 ─────────────────────────────────────────
+function onUsedChange(key, val) {
+  setUsed(key, parseFloat(val));
+  updateRow(key);
+  rebuildAlerts();
+  updateStatRemain();
+  showToast();
+}
+
+// ─── 重建注意事項區塊 ─────────────────────────────────────
+function rebuildAlerts() {
+  const container = document.getElementById('alerts-container');
+  let html = '';
+
+  // 到期日警示（固定）
+  for (const a of DATE_ALERTS) {
+    html += `
+      <div class="alert-row">
+        <div class="alert-days${a.warn ? ' warn' : ''}">
+          <div class="num">${a.days}</div>
+          <div class="lbl">天後到期</div>
+        </div>
+        <div class="alert-info">
+          <div class="aname">${a.name}</div>
+          <div class="adetail">到期日：${a.expiry}　｜　${a.note}</div>
+        </div>
+      </div>`;
   }
 
+  // 時數不足警示（動態）
+  for (const [key, data] of Object.entries(COMPANY_DATA)) {
+    const used = getUsed(key);
+    const remaining = Math.max(0, Math.round((data.contract - used) * 10) / 10);
+    if (remaining <= LOW_THRESHOLD) {
+      html += `
+        <div class="alert-row">
+          <div class="alert-days" style="background:#c0392b;">
+            <div class="num">${remaining}</div>
+            <div class="lbl">小時剩餘</div>
+          </div>
+          <div class="alert-info">
+            <div class="aname">🔴 ${data.name}</div>
+            <div class="adetail">到期日：${data.expiry}　｜　合約${data.contract}小時　｜　已使用${used}小時，<strong style="color:#c0392b;">剩餘${remaining}小時 — 時數不足，請確認是否追加或續約</strong></div>
+          </div>
+        </div>`;
+    }
+  }
+
+  container.innerHTML = html || '<p class="no-alert">目前無緊急事項</p>';
+}
+
+// ─── 更新頁首合計剩餘時數 ────────────────────────────────
+function updateStatRemain() {
+  let total = 0;
+  for (const key of Object.keys(COMPANY_DATA)) {
+    const data = COMPANY_DATA[key];
+    const used = getUsed(key);
+    total += Math.max(0, data.contract - used);
+  }
+  total += 5; // 京珀彩妝靜態5h
+  const el = document.getElementById('stat-remain');
+  if (el) el.textContent = Math.round(total * 10) / 10;
+}
+
+// ─── Toast 提示 ───────────────────────────────────────────
+const toast = document.getElementById('saveToast');
+let toastTimer;
+function showToast() {
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// ─── 備註欄 ───────────────────────────────────────────────
+function updateEmptyClass(el) {
+  el.classList.toggle('empty', el.textContent.trim() === '');
+}
+
+// ─── 初始化 ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+  // 建立所有選單並更新列
+  for (const key of Object.keys(COMPANY_DATA)) {
+    buildSelect(key);
+    updateRow(key);
+  }
+  // 建立警示區塊
+  rebuildAlerts();
+  // 更新頁首統計
+  updateStatRemain();
+
+  // 備註欄持久化
   document.querySelectorAll('.note-editable').forEach(el => {
-    const key = STORAGE_PREFIX + el.dataset.key;
-    const saved = localStorage.getItem(key);
+    const noteKey = NOTE_PREFIX + el.dataset.key;
+    const saved = localStorage.getItem(noteKey);
     if (saved !== null) el.textContent = saved;
     updateEmptyClass(el);
-
     el.addEventListener('input', () => {
-      localStorage.setItem(key, el.textContent);
+      localStorage.setItem(noteKey, el.textContent);
       updateEmptyClass(el);
       showToast();
     });
   });
+});
 </script>
 
 </body>
