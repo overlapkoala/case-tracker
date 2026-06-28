@@ -309,16 +309,16 @@ async function checkPw(){
         </tr>
 
         <tr>
-          <td class="left"><div class="company-name">賊活再續有限公司</div></td>
+          <td class="left"><div class="company-name">賦活再續有限公司</div></td>
           <td><span class="hours-num">6.5</span></td>
           <td class="date-cell">115/1/1 至 115/12/31</td>
           <td class="date-cell date-ok">115/12/31</td>
-          <td><select class="hours-select" id="sel-賊活再續" onchange="onUsedChange('賊活再續',this.value)"></select></td>
+          <td><select class="hours-select" id="sel-賦活再續" onchange="onUsedChange('賦活再續',this.value)"></select></td>
           <td>
-            <span id="remain-賊活再續" class="hours-remain"></span>
-            <div class="progress-bar"><div id="bar-賊活再續" class="progress-fill"></div></div>
+            <span id="remain-賦活再續" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-賦活再續" class="progress-fill"></div></div>
           </td>
-          <td><div class="note-editable" contenteditable="true" data-key="賊活再續">2.5協議書</div></td>
+          <td><div class="note-editable" contenteditable="true" data-key="賦活再續">2.5協議書</div></td>
         </tr>
 
         <tr>
@@ -334,7 +334,6 @@ async function checkPw(){
           <td><div class="note-editable" contenteditable="true" data-key="傑睿悍修俱">2契約 1洽談（有協議加一）</div></td>
         </tr>
 
-        <!-- 京珀彩妝：特殊情況（已續約），維持靜態顯示 -->
         <tr>
           <td class="left">
             <div class="company-name">京珀彩妝有限公司</div>
@@ -343,10 +342,10 @@ async function checkPw(){
           <td><span class="hours-num">10</span></td>
           <td class="date-cell">115/1/1 至 115/12/31</td>
           <td class="date-cell date-ok">115/12/31</td>
-          <td class="hours-used">10</td>
+          <td><select class="hours-select" id="sel-京珀彩妝" onchange="onUsedChange('京珀彩妝',this.value)"></select></td>
           <td>
-            <span class="hours-remain remain-ok">5</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:50%"></div></div>
+            <span id="remain-京珀彩妝" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-京珀彩妝" class="progress-fill"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="京珀彩妝">2契約 2契約 1授權書；有再續約</div></td>
         </tr>
@@ -494,8 +493,9 @@ const COMPANY_DATA = {
   '三富全球企業': { name: '三富全球企業有限公司',    contract: 5,   initUsed: 4,   expiry: '115/9/30'  },
   '達仁地產':    { name: '達仁地產有限公司',         contract: 5,   initUsed: 4,   expiry: '115/9/30'  },
   '鼎旺營造':    { name: '鼎旺營造股份有限公司',     contract: 20,  initUsed: 3.5, expiry: '115/11/30' },
-  '賊活再續':    { name: '賊活再續有限公司',         contract: 6.5, initUsed: 2.5, expiry: '115/12/31' },
+  '賦活再續':    { name: '賦活再續有限公司',         contract: 6.5, initUsed: 2.5, expiry: '115/12/31' },
   '傑睿悍修俱':  { name: '傑睿悍修俱股份有限公司',  contract: 5,   initUsed: 1,   expiry: '115/12/31' },
+  '京珀彩妝':    { name: '京珀彩妝有限公司',         contract: 15,  initUsed: 10,  expiry: '115/12/31' },
   '港灣生活家':  { name: '港灣生活家股份有限公司',   contract: 5,   initUsed: 3,   expiry: '116/1/31'  },
   '勝輝實業_續': { name: '勝輝實業有限公司（續）',   contract: 6,   initUsed: 1.5, expiry: '116/1/31'  },
   '開溜有限公司': { name: '開溜有限公司',            contract: 5,   initUsed: 4.5, expiry: '116/2/28'  },
