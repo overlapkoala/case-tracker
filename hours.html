@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>法律顧問時數追蹤表</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: #f0f2f5; color: #333; font-size: 15px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a3a5c, #2d6a9f);
+      color: white; padding: 24px 32px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+    header .meta { font-size: 13px; opacity: .8; margin-top: 4px; }
+    .stats { display: flex; gap: 16px; flex-wrap: wrap; }
+    .stat-box {
+      background: rgba(255,255,255,.15); border-radius: 10px;
+      padding: 10px 18px; text-align: center; min-width: 80px;
+    }
+    .stat-box .num { font-size: 26px; font-weight: 700; }
+    .stat-box .lbl { font-size: 12px; opacity: .85; }
+
+    main { max-width: 1400px; margin: 0 auto; padding: 24px 20px; }
+
+    .card {
+      background: white; border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07);
+      margin-bottom: 24px; overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 22px; font-size: 16px; font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .card-header.red    { background: #fff5f5; color: #c0392b; border-color: #fdd; }
+    .card-header.orange { background: #fff8f0; color: #d35400; border-color: #fde8cc; }
+    .card-header.blue   { background: #f0f6ff; color: #1a5a9a; border-color: #d0e4f7; }
+    .card-header.gray   { background: #f7f7f7; color: #555;    border-color: #e8e8e8; }
+    .card-header.green  { background: #f0fff4; color: #27ae60; border-color: #d0f0dc; }
+    .card-body { padding: 18px 22px; }
+
+    /* 主表格 */
+    .hours-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .hours-table th {
+      background: #f0f4f8; padding: 10px 14px; text-align: center;
+      font-weight: 700; color: #444; border-bottom: 2px solid #dde3ea;
+      white-space: nowrap;
+    }
+    .hours-table th.left { text-align: left; }
+    .hours-table td {
+      padding: 10px 14px; border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle; text-align: center; line-height: 1.5;
+    }
+    .hours-table td.left { text-align: left; }
+    .hours-table tr:hover td { background: #fafcff; }
+
+    /* 公司名稱欄 */
+    .company-name { font-weight: 700; font-size: 14px; }
+
+    /* 時數欄 */
+    .hours-num { font-size: 18px; font-weight: 700; color: #1a5a9a; }
+    .hours-used { color: #666; }
+    .hours-remain { font-weight: 700; }
+    .remain-ok   { color: #27ae60; }
+    .remain-low  { color: #e67e22; }
+    .remain-zero { color: #c0392b; }
+
+    /* 到期日 */
+    .date-cell { white-space: nowrap; font-size: 13px; }
+    .date-urgent { color: #c0392b; font-weight: 700; }
+    .date-soon   { color: #d35400; font-weight: 600; }
+    .date-ok     { color: #555; }
+
+    /* 標籤 */
+    .badge {
+      display: inline-block; border-radius: 20px;
+      padding: 3px 10px; font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .badge.expiring { background: #fdedec; color: #c0392b; border: 1px solid #f5b7b1; }
+    .badge.soon     { background: #fef5e7; color: #ca6f1e; border: 1px solid #f0b429; }
+    .badge.renewed  { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+    .badge.active   { background: #e8f4fb; color: #1a5a9a; }
+
+    /* 備註欄 */
+    .note-editable {
+      min-height: 24px; padding: 4px 8px;
+      border-radius: 6px; border: 1.5px solid transparent;
+      font-size: 13px; color: #555; line-height: 1.6;
+      cursor: text; transition: border-color .2s, background .2s;
+      white-space: pre-wrap; word-break: break-all; text-align: left;
+    }
+    .note-editable:hover  { background: #f8fbff; border-color: #cde; }
+    .note-editable:focus  { outline: none; background: #f0f7ff; border-color: #4a6fa5; }
+    .note-editable.empty::before { content: attr(data-placeholder); color: #ccc; pointer-events: none; }
+
+    /* 進度條 */
+    .progress-bar {
+      height: 6px; background: #e9ecef; border-radius: 3px; margin-top: 6px;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 3px; transition: width .3s;
+    }
+    .fill-ok   { background: #27ae60; }
+    .fill-mid  { background: #f0b429; }
+    .fill-high { background: #e74c3c; }
+
+    /* 未續約區 */
+    .closed-table tr td { color: #999; background: #fafafa; }
+    .closed-table .company-name { color: #aaa; }
+    .closed-table .hours-num { color: #bbb; }
+    .closed-tag {
+      display: inline-block; font-size: 12px; font-weight: 700;
+      padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+    }
+    .closed-tag.expired    { background: #fce4e4; color: #c0392b; }
+    .closed-tag.no-renew   { background: #fce4e4; color: #c0392b; }
+
+    /* 即將到期提醒卡 */
+    .alert-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 12px 0; border-bottom: 1px solid #fde8cc;
+    }
+    .alert-row:last-child { border-bottom: none; }
+    .alert-days {
+      background: #e74c3c; color: white; border-radius: 10px;
+      padding: 6px 12px; text-align: center; min-width: 60px; flex-shrink: 0;
+    }
+    .alert-days.warn { background: #e67e22; }
+    .alert-days .num { font-size: 20px; font-weight: 700; line-height: 1; }
+    .alert-days .lbl { font-size: 10px; }
+    .alert-info .aname { font-weight: 700; font-size: 15px; }
+    .alert-info .adetail { font-size: 13px; color: #666; margin-top: 3px; }
+
+    /* 儲存提示 */
+    .save-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #27ae60; color: white; border-radius: 10px;
+      padding: 10px 20px; font-size: 14px; font-weight: 600;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .3s, transform .3s; z-index: 999; pointer-events: none;
+    }
+    .save-toast.show { opacity: 1; transform: translateY(0); }
+
+    footer { text-align: center; padding: 24px; color: #aaa; font-size: 13px; }
+
+    @media (max-width: 900px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .hours-table { font-size: 12px; }
+      .hours-table td, .hours-table th { padding: 7px 8px; }
+    }
+  </style>
+</head>
+<body>
+<style>#pw-overlay{position:fixed;inset:0;background:#1a1a2e;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:sans-serif}#pw-box{background:#fff;border-radius:12px;padding:40px 36px;text-align:center;width:320px;box-shadow:0 8px 32px rgba(0,0,0,.3)}#pw-box h2{margin:0 0 8px;color:#1a1a2e;font-size:1.3rem}#pw-box p{color:#666;font-size:.9rem;margin:0 0 24px}#pw-input{width:100%;box-sizing:border-box;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none}#pw-input:focus{border-color:#4a90d9}#pw-btn{margin-top:12px;width:100%;padding:11px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}#pw-btn:hover{background:#2d2d5e}#pw-err{color:#e74c3c;font-size:.85rem;margin-top:8px;min-height:20px}</style><div id="pw-overlay"><div id="pw-box"><h2>&#9878; 律師事務所</h2><p>案件追蹤系統･請輸入密碼</p><input id="pw-input" type="password" placeholder="密碼" onkeydown="if(event.key==='Enter')checkPw()"><button id="pw-btn" onclick="checkPw()">進入</button><div id="pw-err"></div></div></div><script>
+(function(){
+  if(sessionStorage.getItem('case_auth')==='1'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var o=document.getElementById('pw-overlay');
+      if(o)o.remove();
+    });
+  }
+})();
+async function checkPw(){
+  var v=document.getElementById('pw-input').value;
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
+  var hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(hex==='07334386287751ba02a4588c1a0875dbd074a61bd9e6ab7c48d244eacd0c99e0'){
+    sessionStorage.setItem('case_auth','1');
+    document.getElementById('pw-overlay').remove();
+  }else{
+    document.getElementById('pw-err').textContent='密碼錯誤，請再試一次';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+</script>
+
+
+<div class="save-toast" id="saveToast">✓ 備註已儲存</div>
+
+<header>
+  <div>
+    <h1>📋 法律顧問時數追蹤表</h1>
+    <div class="meta">最後更新：2026-06-28　｜　由 Claude 協助管理</div>
+  </div>
+  <div class="stats">
+    <div class="stat-box">
+      <div class="num">12</div>
+      <div class="lbl">進行中合約</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">76.5</div>
+      <div class="lbl">合約總時數</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">3</div>
+      <div class="lbl">未續約</div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ── 即將到期提醒 ── -->
+<div class="card">
+  <div class="card-header orange">⏰ 即將到期（3個月內）</div>
+  <div class="card-body">
+    <div class="alert-row">
+      <div class="alert-days">
+        <div class="num">33</div>
+        <div class="lbl">天後到期</div>
+      </div>
+      <div class="alert-info">
+        <div class="aname">康翔科技股份有限公司</div>
+        <div class="adetail">到期日：115/7/31　｜　合約15小時　｜　已使用0小時，剩餘15小時　｜　⚠️ 請提前確認是否續約</div>
+      </div>
+    </div>
+    <div class="alert-row">
+      <div class="alert-days warn">
+        <div class="num">64</div>
+        <div class="lbl">天後到期</div>
+      </div>
+      <div class="alert-info">
+        <div class="aname">四進有限公司</div>
+        <div class="adetail">到期日：115/8/31　｜　合約5小時　｜　已使用3.3小時，剩餘1.7小時</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 進行中合約 ── -->
+<div class="card">
+  <div class="card-header blue">📁 進行中合約（12件，依到期日排序）</div>
+  <div class="card-body" style="padding:0;overflow-x:auto;">
+    <table class="hours-table">
+      <thead>
+        <tr>
+          <th class="left" style="min-width:160px;">公司名稱</th>
+          <th style="min-width:70px;">合約時數</th>
+          <th style="min-width:160px;">合約期間</th>
+          <th style="min-width:90px;">到期日</th>
+          <th style="min-width:80px;">已使用</th>
+          <th style="min-width:90px;">膳餘時數</th>
+          <th class="left" style="min-width:260px;">備註（可點擊編輯）</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- 康翔 - 33天後到期 -->
+        <tr>
+          <td class="left">
+            <div class="company-name">康翔科技股份有限公司</div>
+            <span class="badge expiring">⚠️ 33天後到期</span>
+          </td>
+          <td><span class="hours-num">15</span></td>
+          <td class="date-cell">114/8/1 至 115/7/31</td>
+          <td class="date-cell date-urgent">115/7/31</td>
+          <td class="hours-used">0</td>
+          <td>
+            <span class="hours-remain remain-ok">15</span>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:0%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="康翔科技" data-placeholder="點此輸入備註…"></div></td>
+        </tr>
+
+        <!-- 四進 - 64天後到期 -->
+        <tr>
+          <td class="left">
+            <div class="company-name">四進有限公司</div>
+            <span class="badge soon">64天後到期</span>
+          </td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell">114/9/1 至 115/8/31</td>
+          <td class="date-cell date-soon">115/8/31</td>
+          <td class="hours-used">3.3</td>
+          <td>
+            <span class="hours-remain remain-low">1.7</span>
+            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:66%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="四進有限公司">1.3存函、1.5書狀、0.5請假狀</div></td>
+        </tr>
+
+        <!-- 三富全球 -->
+        <tr>
+          <td class="left"><div class="company-name">三富全球企業有限公司</div></td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell">114/10/1 至 115/9/30</td>
+          <td class="date-cell date-ok">115/9/30</td>
+          <td class="hours-used">4</td>
+          <td>
+            <span class="hours-remain remain-low">1</span>
+            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:80%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="三富全球企業">0.5問題、2.5書狀、2契約</div></td>
+        </tr>
+
+        <!-- 達仁地產 -->
+        <tr>
+          <td class="left"><div class="company-name">達仁地產有限公司</div></td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell">114/10/1 至 115/9/30</td>
+          <td class="date-cell date-ok">115/9/30</td>
+          <td class="hours-used">4</td>
+          <td>
+            <span class="hours-remain remain-low">1</span>
+            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:80%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="達仁地產">1.5書狀、2.5契約</div></td>
+        </tr>
+
+        <!-- 鼎旺營造 -->
+        <tr>
+          <td class="left"><div class="company-name">鼎旺營造股份有限公司</div></td>
+          <td><span class="hours-num">20</span></td>
+          <td class="date-cell">114/12/1 至 115/11/30</td>
+          <td class="date-cell date-ok">115/11/30</td>
+          <td class="hours-used">3.5</td>
+          <td>
+            <span class="hours-remain remain-ok">16.5</span>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:17.5%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="鼎旺營造">詳附件</div></td>
+        </tr>
+
+        <!-- 賊活再續 -->
+        <tr>
+          <td class="left"><div class="company-name">賊活再續有限公司</div></td>
+          <td><span class="hours-num">6.5</span></td>
+          <td class="date-cell">115/1/1 至 115/12/31</td>
+          <td class="date-cell date-ok">115/12/31</td>
+          <td class="hours-used">2.5</td>
+          <td>
+            <span class="hours-remain remain-ok">4</span>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:38%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="賊活再續">2.5協議書</div></td>
+        </tr>
+
+        <!-- 傑睿悍修俱 -->
+        <tr>
+          <td class="left"><div class="company-name">傑睿悍修俱股份有限公司</div></td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell">115/1/1 至 115/12/31</td>
+          <td class="date-cell date-ok">115/12/31</td>
+          <td class="hours-used">1</td>
+          <td>
+            <span class="hours-remain remain-ok">4</span>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:20%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="傑睿悍修俱">2契約 1洽談（有協議加一）</div></td>
+        </tr>
+
+        <!-- 京珀彩妝 - 已再續約 -->
+        <tr>
+          <td class="left">
+            <div class="company-name">京珀彩妝有限公司</div>
+            <span class="badge renewed">✅ 有再續約</span>
+          </td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell">115/1/1 至 115/12/31</td>
+          <td class="date-cell date-ok">115/12/31</td>
+          <td class="hours-used">5+5</td>
+          <td>
+            <span class="hours-remain remain-ok">5</span>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:0%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="京珀彩妝">2契約 2契約 1授權書；有再續約</div></td>
+        </tr>
+
+        <!-- 港灣生活家 -->
+        <tr>
+          <td class="left"><div class="company-name">港灣生活家股份有限公司</div></td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell">115/2/1 至 116/1/31</td>
+          <td class="date-cell date-ok">116/1/31</td>
+          <td class="hours-used">3</td>
+          <td>
+            <span class="hours-remain remain-ok">2</span>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:60%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="港灣生活家">1忠漢　2小時kaven</div></td>
+        </tr>
+
+        <!-- 勝輝實業（續約版） -->
+        <tr>
+          <td class="left">
+            <div class="company-name">勝輝實業有限公司</div>
+            <span class="badge active">續約合約</span>
+          </td>
+          <td><span class="hours-num">5+1</span></td>
+          <td class="date-cell">115/2/1 至 116/1/31</td>
+          <td class="date-cell date-ok">116/1/31</td>
+          <td class="hours-used">1.5</td>
+          <td>
+            <span class="hours-remain remain-ok">4.5</span>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:25%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="勝輝實業_續">1.5書狀</div></td>
+        </tr>
+
+        <!-- 閒溜 -->
+        <tr>
+          <td class="left"><div class="company-name">閒溜有限公司</div></td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell">115/3/1 至 116/2/28</td>
+          <td class="date-cell date-ok">116/2/28</td>
+          <td class="hours-used">4.5</td>
+          <td>
+            <span class="hours-remain remain-zero">0.5</span>
+            <div class="progress-bar"><div class="progress-fill fill-high" style="width:90%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="閒溜有限公司">0.5回復 0.25回復 2.25審約 1.5審約</div></td>
+        </tr>
+
+        <!-- 劉政昕 - 無合約期間 -->
+        <tr>
+          <td class="left"><div class="company-name">劉政昕</div></td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell" style="color:#aaa;">—</td>
+          <td class="date-cell" style="color:#aaa;">—</td>
+          <td class="hours-used">0.5</td>
+          <td>
+            <span class="hours-remain remain-ok">4.5</span>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:10%"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="劉政昕">0.5回復</div></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── 未續約 / 已到期 ── -->
+<div class="card">
+  <div class="card-header gray">🗂 未續約 / 已到期（3件）</div>
+  <div class="card-body" style="padding:0;overflow-x:auto;">
+    <table class="hours-table closed-table">
+      <thead>
+        <tr>
+          <th class="left" style="min-width:160px;">公司名稱</th>
+          <th style="min-width:70px;">合約時數</th>
+          <th style="min-width:160px;">合約期間</th>
+          <th style="min-width:90px;">到期日</th>
+          <th style="min-width:80px;">已使用</th>
+          <th style="min-width:90px;">膳餘時數</th>
+          <th class="left" style="min-width:260px;">備註</th>
+          <th style="min-width:70px;">狀態</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td class="left"><div class="company-name">勝佑精密工業有限公司</div></td>
+          <td>5</td>
+          <td class="date-cell">114/4/1 至 115/3/31</td>
+          <td class="date-cell">115/3/31</td>
+          <td>2.5</td>
+          <td>2.5</td>
+          <td><div class="note-editable" contenteditable="true" data-key="勝佑精密">2.5協議書、聲明書；(未確定時數)協議</div></td>
+          <td><span class="closed-tag no-renew">未續約！</span></td>
+        </tr>
+
+        <tr>
+          <td class="left"><div class="company-name">勝輝實業有限公司</div></td>
+          <td>5</td>
+          <td class="date-cell">114/1/1 至 114/12/31</td>
+          <td class="date-cell">114/12/31</td>
+          <td>4</td>
+          <td>1</td>
+          <td><div class="note-editable" contenteditable="true" data-key="勝輝實業_舊">1.5書狀、0.5存函、0.5存函、1.5書狀</div></td>
+          <td><span class="closed-tag expired">到期！</span></td>
+        </tr>
+
+        <tr>
+          <td class="left"><div class="company-name">兩兩探戈美學顧問有限公司</div></td>
+          <td>5</td>
+          <td class="date-cell">114/1/1 至 114/12/31</td>
+          <td class="date-cell">114/12/31</td>
+          <td>3.3</td>
+          <td>1</td>
+          <td><div class="note-editable" contenteditable="true" data-key="兩兩探戈">0.8諮詢、2.5契約、0.2詢問問題、0.5問問題</div></td>
+          <td><span class="closed-tag expired">到期！</span></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── 說明 ── -->
+<div class="card">
+  <div class="card-header green">💡 如何更新</div>
+  <div class="card-body">
+    <div style="background:#f0f6ff;border-left:4px solid #2d6a9f;border-radius:0 10px 10px 0;padding:14px 18px;font-size:14px;line-height:1.8;color:#444;">
+      <strong style="color:#1a5a9a;">備註欄：直接在網頁上點擊就能打字，自動儲存在這台電腦。</strong><br><br>
+      <strong>其他更新請告訴 Claude，例如：</strong><br>
+      「康翔科技已使用2小時，備註：審閱勞動契約」<br>
+      「勝輝實業已續約，新合約 116/2/1 至 117/1/31，5小時」<br>
+      「新增顧問：○○公司，合約X小時，期間X至X」<br>
+      「勝佑精密移除未續約，已重新簽約」
+    </div>
+    <div style="margin-top:12px">
+      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-06-28（初版建立）</span>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  法律顧問時數追蹤表　｜　由 Claude 協助建立與維護　｜　2026-06-28
+</footer>
+
+<script>
+  const STORAGE_PREFIX = 'legal_hours_v1_';
+  const toast = document.getElementById('saveToast');
+  let toastTimer;
+
+  function showToast() {
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  function updateEmptyClass(el) {
+    el.classList.toggle('empty', el.textContent.trim() === '');
+  }
+
+  document.querySelectorAll('.note-editable').forEach(el => {
+    const key = STORAGE_PREFIX + el.dataset.key;
+    const saved = localStorage.getItem(key);
+    if (saved !== null) el.textContent = saved;
+    updateEmptyClass(el);
+
+    el.addEventListener('input', () => {
+      localStorage.setItem(key, el.textContent);
+      updateEmptyClass(el);
+      showToast();
+    });
+  });
+</script>
+
+</body>
+</html>
