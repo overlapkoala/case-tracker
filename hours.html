@@ -495,7 +495,7 @@ const COMPANY_DATA = {
   '鼎旺營造':    { name: '鼎旺營造股份有限公司',     contract: 20,  initUsed: 3.5, expiry: '115/11/30' },
   '賦活再續':    { name: '賦活再續有限公司',         contract: 6.5, initUsed: 2.5, expiry: '115/12/31' },
   '傑睿悍修俱':  { name: '傑睿悍修俱股份有限公司',  contract: 5,   initUsed: 1,   expiry: '115/12/31' },
-  '京珀彩妝':    { name: '京珀彩妝有限公司',         contract: 15,  initUsed: 10,  expiry: '115/12/31' },
+  '京珀彩妝':    { name: '京珀彩妝有限公司',         contract: 10,  initUsed: 5,   expiry: '115/12/31' },
   '港灣生活家':  { name: '港灣生活家股份有限公司',   contract: 5,   initUsed: 3,   expiry: '116/1/31'  },
   '勝輝實業_續': { name: '勝輝實業有限公司（續）',   contract: 6,   initUsed: 1.5, expiry: '116/1/31'  },
   '開溜有限公司': { name: '開溜有限公司',            contract: 5,   initUsed: 4.5, expiry: '116/2/28'  },
@@ -625,7 +625,6 @@ function updateStatRemain() {
     const used = getUsed(key);
     total += Math.max(0, data.contract - used);
   }
-  total += 5; // 京珀彩妝靜態5h
   const el = document.getElementById('stat-remain');
   if (el) el.textContent = Math.round(total * 10) / 10;
 }
