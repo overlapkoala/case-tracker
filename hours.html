@@ -247,13 +247,13 @@ async function checkPw(){
           <th style="min-width:160px;">合約期間</th>
           <th style="min-width:90px;">到期日</th>
           <th style="min-width:80px;">已使用</th>
-          <th style="min-width:90px;">膳餘時數</th>
+          <th style="min-width:90px;">剩餘時數</th>
           <th class="left" style="min-width:260px;">備註（可點擊編輯）</th>
         </tr>
       </thead>
       <tbody>
 
-        <!-- 康翔 - 33天後到期 -->
+        <!-- 康翔 - 33天後到期 → 剩15/15=100% -->
         <tr>
           <td class="left">
             <div class="company-name">康翔科技股份有限公司</div>
@@ -265,12 +265,12 @@ async function checkPw(){
           <td class="hours-used">0</td>
           <td>
             <span class="hours-remain remain-ok">15</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:0%"></div></div>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:100%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="康翔科技" data-placeholder="點此輸入備註…"></div></td>
         </tr>
 
-        <!-- 四進 - 64天後到期 -->
+        <!-- 四進 - 64天後到期 → 剩1.7/5=34% -->
         <tr>
           <td class="left">
             <div class="company-name">四進有限公司</div>
@@ -282,12 +282,12 @@ async function checkPw(){
           <td class="hours-used">3.3</td>
           <td>
             <span class="hours-remain remain-low">1.7</span>
-            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:66%"></div></div>
+            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:34%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="四進有限公司">1.3存函、1.5書狀、0.5請假狀</div></td>
         </tr>
 
-        <!-- 三富全球 -->
+        <!-- 三富全球 → 剩1/5=20% -->
         <tr>
           <td class="left"><div class="company-name">三富全球企業有限公司</div></td>
           <td><span class="hours-num">5</span></td>
@@ -295,13 +295,13 @@ async function checkPw(){
           <td class="date-cell date-ok">115/9/30</td>
           <td class="hours-used">4</td>
           <td>
-            <span class="hours-remain remain-low">1</span>
-            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:80%"></div></div>
+            <span class="hours-remain remain-zero">1</span>
+            <div class="progress-bar"><div class="progress-fill fill-high" style="width:20%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="三富全球企業">0.5問題、2.5書狀、2契約</div></td>
         </tr>
 
-        <!-- 達仁地產 -->
+        <!-- 達仁地產 → 剩1/5=20% -->
         <tr>
           <td class="left"><div class="company-name">達仁地產有限公司</div></td>
           <td><span class="hours-num">5</span></td>
@@ -309,13 +309,13 @@ async function checkPw(){
           <td class="date-cell date-ok">115/9/30</td>
           <td class="hours-used">4</td>
           <td>
-            <span class="hours-remain remain-low">1</span>
-            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:80%"></div></div>
+            <span class="hours-remain remain-zero">1</span>
+            <div class="progress-bar"><div class="progress-fill fill-high" style="width:20%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="達仁地產">1.5書狀、2.5契約</div></td>
         </tr>
 
-        <!-- 鼎旺營造 -->
+        <!-- 鼎旺營造 → 剩16.5/20=82.5% -->
         <tr>
           <td class="left"><div class="company-name">鼎旺營造股份有限公司</div></td>
           <td><span class="hours-num">20</span></td>
@@ -324,12 +324,12 @@ async function checkPw(){
           <td class="hours-used">3.5</td>
           <td>
             <span class="hours-remain remain-ok">16.5</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:17.5%"></div></div>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:82.5%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="鼎旺營造">詳附件</div></td>
         </tr>
 
-        <!-- 賊活再續 -->
+        <!-- 賊活再續 → 剩4/6.5=61.5% -->
         <tr>
           <td class="left"><div class="company-name">賊活再續有限公司</div></td>
           <td><span class="hours-num">6.5</span></td>
@@ -338,12 +338,12 @@ async function checkPw(){
           <td class="hours-used">2.5</td>
           <td>
             <span class="hours-remain remain-ok">4</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:38%"></div></div>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:61.5%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="賊活再續">2.5協議書</div></td>
         </tr>
 
-        <!-- 傑睿悍修俱 -->
+        <!-- 傑睿悍修俱 → 剩4/5=80% -->
         <tr>
           <td class="left"><div class="company-name">傑睿悍修俱股份有限公司</div></td>
           <td><span class="hours-num">5</span></td>
@@ -352,12 +352,12 @@ async function checkPw(){
           <td class="hours-used">1</td>
           <td>
             <span class="hours-remain remain-ok">4</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:20%"></div></div>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:80%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="傑睿悍修俱">2契約 1洽談（有協議加一）</div></td>
         </tr>
 
-        <!-- 京珀彩妝 - 已再續約 -->
+        <!-- 京珀彩妝 → 有再續約，剩5/5=100% -->
         <tr>
           <td class="left">
             <div class="company-name">京珀彩妝有限公司</div>
@@ -369,12 +369,12 @@ async function checkPw(){
           <td class="hours-used">5+5</td>
           <td>
             <span class="hours-remain remain-ok">5</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:0%"></div></div>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:100%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="京珀彩妝">2契約 2契約 1授權書；有再續約</div></td>
         </tr>
 
-        <!-- 港灣生活家 -->
+        <!-- 港灣生活家 → 剩2/5=40% -->
         <tr>
           <td class="left"><div class="company-name">港灣生活家股份有限公司</div></td>
           <td><span class="hours-num">5</span></td>
@@ -382,13 +382,13 @@ async function checkPw(){
           <td class="date-cell date-ok">116/1/31</td>
           <td class="hours-used">3</td>
           <td>
-            <span class="hours-remain remain-ok">2</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:60%"></div></div>
+            <span class="hours-remain remain-low">2</span>
+            <div class="progress-bar"><div class="progress-fill fill-mid" style="width:40%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="港灣生活家">1忠漢　2小時kaven</div></td>
         </tr>
 
-        <!-- 勝輝實業（續約版） -->
+        <!-- 勝輝實業（續約版）→ 剩4.5/6=75% -->
         <tr>
           <td class="left">
             <div class="company-name">勝輝實業有限公司</div>
@@ -400,12 +400,12 @@ async function checkPw(){
           <td class="hours-used">1.5</td>
           <td>
             <span class="hours-remain remain-ok">4.5</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:25%"></div></div>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:75%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="勝輝實業_續">1.5書狀</div></td>
         </tr>
 
-        <!-- 閒溜 -->
+        <!-- 閒溜 → 剩0.5/5=10% -->
         <tr>
           <td class="left"><div class="company-name">閒溜有限公司</div></td>
           <td><span class="hours-num">5</span></td>
@@ -414,12 +414,12 @@ async function checkPw(){
           <td class="hours-used">4.5</td>
           <td>
             <span class="hours-remain remain-zero">0.5</span>
-            <div class="progress-bar"><div class="progress-fill fill-high" style="width:90%"></div></div>
+            <div class="progress-bar"><div class="progress-fill fill-high" style="width:10%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="閒溜有限公司">0.5回復 0.25回復 2.25審約 1.5審約</div></td>
         </tr>
 
-        <!-- 劉政昕 - 無合約期間 -->
+        <!-- 劉政昕 → 剩4.5/5=90% -->
         <tr>
           <td class="left"><div class="company-name">劉政昕</div></td>
           <td><span class="hours-num">5</span></td>
@@ -428,7 +428,7 @@ async function checkPw(){
           <td class="hours-used">0.5</td>
           <td>
             <span class="hours-remain remain-ok">4.5</span>
-            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:10%"></div></div>
+            <div class="progress-bar"><div class="progress-fill fill-ok" style="width:90%"></div></div>
           </td>
           <td><div class="note-editable" contenteditable="true" data-key="劉政昕">0.5回復</div></td>
         </tr>
@@ -450,7 +450,7 @@ async function checkPw(){
           <th style="min-width:160px;">合約期間</th>
           <th style="min-width:90px;">到期日</th>
           <th style="min-width:80px;">已使用</th>
-          <th style="min-width:90px;">膳餘時數</th>
+          <th style="min-width:90px;">剩餘時數</th>
           <th class="left" style="min-width:260px;">備註</th>
           <th style="min-width:70px;">狀態</th>
         </tr>
