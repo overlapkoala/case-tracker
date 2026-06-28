@@ -210,7 +210,7 @@ async function checkPw(){
 
 <!-- ── 即將到期提醒 ── -->
 <div class="card">
-  <div class="card-header orange">⏰ 即將到期（3個月內）</div>
+  <div class="card-header orange">⏰ 注意事項（即將到期 / 時數不足）</div>
   <div class="card-body">
     <div class="alert-row">
       <div class="alert-days">
@@ -230,6 +230,16 @@ async function checkPw(){
       <div class="alert-info">
         <div class="aname">四進有限公司</div>
         <div class="adetail">到期日：115/8/31　｜　合約5小時　｜　已使用3.3小時，剩餘1.7小時</div>
+      </div>
+    </div>
+    <div class="alert-row">
+      <div class="alert-days" style="background:#c0392b;">
+        <div class="num">0.5</div>
+        <div class="lbl">小時剩餘</div>
+      </div>
+      <div class="alert-info">
+        <div class="aname">🔴 開溜有限公司</div>
+        <div class="adetail">到期日：116/2/28　｜　合約5小時　｜　已使用4.5小時，<strong style="color:#c0392b;">剩餘0.5小時 — 時數嚴重不足，請確認是否追加或續約</strong></div>
       </div>
     </div>
   </div>
@@ -405,9 +415,9 @@ async function checkPw(){
           <td><div class="note-editable" contenteditable="true" data-key="勝輝實業_續">1.5書狀</div></td>
         </tr>
 
-        <!-- 閒溜 → 剩0.5/5=10% -->
+        <!-- 開溜 → 剩0.5/5=10% -->
         <tr>
-          <td class="left"><div class="company-name">閒溜有限公司</div></td>
+          <td class="left"><div class="company-name">開溜有限公司</div></td>
           <td><span class="hours-num">5</span></td>
           <td class="date-cell">115/3/1 至 116/2/28</td>
           <td class="date-cell date-ok">116/2/28</td>
@@ -416,7 +426,7 @@ async function checkPw(){
             <span class="hours-remain remain-zero">0.5</span>
             <div class="progress-bar"><div class="progress-fill fill-high" style="width:10%"></div></div>
           </td>
-          <td><div class="note-editable" contenteditable="true" data-key="閒溜有限公司">0.5回復 0.25回復 2.25審約 1.5審約</div></td>
+          <td><div class="note-editable" contenteditable="true" data-key="開溜有限公司">0.5回復 0.25回復 2.25審約 1.5審約</div></td>
         </tr>
 
         <!-- 劉政昕 → 剩4.5/5=90% -->
