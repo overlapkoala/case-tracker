@@ -734,20 +734,34 @@ th.lawyer-th { background: #e8f4fb; color: #1a5a9a; font-size: 13px; min-width: 
       const strong = tr.querySelector('td strong');
       if (!strong) return;
       const caseName = strong.textContent.trim();
-      const key  = PFX + caseName;
+      const key   = PFX + caseName;
       const fkKey = fk(key);
 
-      // 找原本的備註欄（note-ok 或 note-warn）
+      const nextTd = tr.querySelector('td.next-step');
       const noteTd = tr.querySelector('td.note-ok, td.note-warn');
       if (!noteTd) return;
 
-      // 若 Firebase 有存過備註，優先顯示 Firebase 版本
-      if (notes[fkKey] != null) noteTd.textContent = notes[fkKey];
+      // ① 把「備註」欄的 Claude 進度搬到「下一步」欄顯示
+      const claudeNote = noteTd.textContent.trim();
+      if (nextTd && claudeNote && claudeNote !== '—') {
+        const existing = nextTd.textContent.trim();
+        if (existing && existing !== '—') {
+          nextTd.innerHTML =
+            '<span>' + existing + '</span>' +
+            '<br><span style="color:#999;font-size:11px;line-height:1.4;">' + claudeNote + '</span>';
+        } else {
+          nextTd.textContent = claudeNote;
+        }
+      }
 
-      // 讓備註欄變成可編輯
+      // ② 清空「備註」欄，改為律師可編輯欄位
+      noteTd.textContent = '';
       noteTd.contentEditable = 'true';
       noteTd.classList.add('lawyer-note');
-      noteTd.style.cursor = 'text';
+      noteTd.dataset.ph = '律師備註…';
+
+      // ③ 從 Firebase 載入律師備註
+      if (notes[fkKey] != null) noteTd.textContent = notes[fkKey];
 
       noteTd.addEventListener('input', () => {
         showT();
