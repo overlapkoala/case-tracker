@@ -728,55 +728,32 @@ th.lawyer-th { background: #e8f4fb; color: #1a5a9a; font-size: 13px; min-width: 
     } catch(e) { console.warn('Firebase 儲存失敗', e); }
   }
 
-  function emptyClass(el) {
-    el.classList.toggle('empty', el.textContent.trim() === '');
-  }
-
   async function init() {
-    const table = document.querySelector('.case-table');
-    if (!table) return;
-
-    // 表頭加入「律師備註」
-    const headerRow = table.querySelector('thead tr') || table.querySelector('tr:first-child');
-    if (headerRow) {
-      const th = document.createElement('th');
-      th.textContent = '律師備註';
-      th.className = 'lawyer-th';
-      headerRow.appendChild(th);
-    }
-
-    // 每個 group-row colspan +1
-    table.querySelectorAll('tr.group-row').forEach(tr => {
-      const td = tr.querySelector('td[colspan]');
-      if (td) td.colSpan = parseInt(td.colSpan) + 1;
-    });
-
-    // 每個資料列加入可編輯欄位
     const notes = await fbLoad();
-    table.querySelectorAll('tbody tr:not(.group-row)').forEach(tr => {
+    document.querySelectorAll('.case-table tbody tr:not(.group-row)').forEach(tr => {
       const strong = tr.querySelector('td strong');
       if (!strong) return;
       const caseName = strong.textContent.trim();
-      const key = PFX + caseName;
+      const key  = PFX + caseName;
       const fkKey = fk(key);
 
-      const div = document.createElement('div');
-      div.className = 'lawyer-note';
-      div.contentEditable = 'true';
-      div.dataset.ph = '點此輸入律師備註…';
-      if (notes[fkKey] != null) div.textContent = notes[fkKey];
-      emptyClass(div);
+      // 找原本的備註欄（note-ok 或 note-warn）
+      const noteTd = tr.querySelector('td.note-ok, td.note-warn');
+      if (!noteTd) return;
 
-      div.addEventListener('input', () => {
-        emptyClass(div);
+      // 若 Firebase 有存過備註，優先顯示 Firebase 版本
+      if (notes[fkKey] != null) noteTd.textContent = notes[fkKey];
+
+      // 讓備註欄變成可編輯
+      noteTd.contentEditable = 'true';
+      noteTd.classList.add('lawyer-note');
+      noteTd.style.cursor = 'text';
+
+      noteTd.addEventListener('input', () => {
         showT();
         clearTimeout(debounceT[key]);
-        debounceT[key] = setTimeout(() => fbSave(key, div.textContent), 800);
+        debounceT[key] = setTimeout(() => fbSave(key, noteTd.textContent), 800);
       });
-
-      const td = document.createElement('td');
-      td.appendChild(div);
-      tr.appendChild(td);
     });
   }
 
