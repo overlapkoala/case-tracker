@@ -685,5 +685,104 @@ async function checkPw(){
   債清案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-06-25
 </footer>
 
+<!-- 儲存提示 -->
+<div id="saveToastDebt" style="position:fixed;bottom:24px;right:24px;background:#27ae60;color:white;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:600;opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s;z-index:999;pointer-events:none;">✓ 備註已儲存（雲端同步）</div>
+
+<style>
+.lawyer-note {
+  min-height: 22px; padding: 3px 7px;
+  border-radius: 5px; border: 1.5px solid transparent;
+  font-size: 12px; color: #444; line-height: 1.5;
+  cursor: text; white-space: pre-wrap; word-break: break-all;
+  transition: border-color .2s, background .2s;
+}
+.lawyer-note:hover  { background: #f8fbff; border-color: #c0d4f0; }
+.lawyer-note:focus  { outline: none; background: #f0f7ff; border-color: #4a6fa5; }
+.lawyer-note.empty::before { content: attr(data-ph); color: #bbb; pointer-events: none; font-style: italic; }
+th.lawyer-th { background: #e8f4fb; color: #1a5a9a; font-size: 13px; min-width: 160px; }
+</style>
+
+<script>
+(function () {
+  const FB  = 'https://lawfirmnotes-26af0-default-rtdb.firebaseio.com/notes';
+  const PFX = 'dbt_';
+  const toast = document.getElementById('saveToastDebt');
+  let toastT, debounceT = {};
+
+  function showT() {
+    toast.style.opacity = '1'; toast.style.transform = 'translateY(0)';
+    clearTimeout(toastT);
+    toastT = setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(10px)'; }, 2500);
+  }
+  function fk(k) { return k.replace(/[.#$[\]/]/g, '_'); }
+  async function fbLoad() {
+    try { return (await (await fetch(FB + '.json')).json()) || {}; }
+    catch { return {}; }
+  }
+  async function fbSave(key, text) {
+    try {
+      await fetch(FB + '/' + fk(key) + '.json', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(text)
+      });
+    } catch(e) { console.warn('Firebase 儲存失敗', e); }
+  }
+
+  function emptyClass(el) {
+    el.classList.toggle('empty', el.textContent.trim() === '');
+  }
+
+  async function init() {
+    const table = document.querySelector('.case-table');
+    if (!table) return;
+
+    // 表頭加入「律師備註」
+    const headerRow = table.querySelector('thead tr') || table.querySelector('tr:first-child');
+    if (headerRow) {
+      const th = document.createElement('th');
+      th.textContent = '律師備註';
+      th.className = 'lawyer-th';
+      headerRow.appendChild(th);
+    }
+
+    // 每個 group-row colspan +1
+    table.querySelectorAll('tr.group-row').forEach(tr => {
+      const td = tr.querySelector('td[colspan]');
+      if (td) td.colSpan = parseInt(td.colSpan) + 1;
+    });
+
+    // 每個資料列加入可編輯欄位
+    const notes = await fbLoad();
+    table.querySelectorAll('tbody tr:not(.group-row)').forEach(tr => {
+      const strong = tr.querySelector('td strong');
+      if (!strong) return;
+      const caseName = strong.textContent.trim();
+      const key = PFX + caseName;
+      const fkKey = fk(key);
+
+      const div = document.createElement('div');
+      div.className = 'lawyer-note';
+      div.contentEditable = 'true';
+      div.dataset.ph = '點此輸入律師備註…';
+      if (notes[fkKey] != null) div.textContent = notes[fkKey];
+      emptyClass(div);
+
+      div.addEventListener('input', () => {
+        emptyClass(div);
+        showT();
+        clearTimeout(debounceT[key]);
+        debounceT[key] = setTimeout(() => fbSave(key, div.textContent), 800);
+      });
+
+      const td = document.createElement('td');
+      td.appendChild(div);
+      tr.appendChild(td);
+    });
+  }
+
+  init();
+})();
+</script>
+
 </body>
 </html>

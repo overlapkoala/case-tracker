@@ -655,18 +655,40 @@ document.addEventListener('DOMContentLoaded', function () {
   // 更新頁首統計
   updateStatRemain();
 
-  // 備註欄持久化
-  document.querySelectorAll('.note-editable').forEach(el => {
-    const noteKey = NOTE_PREFIX + el.dataset.key;
-    const saved = localStorage.getItem(noteKey);
-    if (saved !== null) el.textContent = saved;
-    updateEmptyClass(el);
-    el.addEventListener('input', () => {
-      localStorage.setItem(noteKey, el.textContent);
+  // ─── Firebase 備註同步 ────────────────────────────────────
+  const FB_BASE_HRS = 'https://lawfirmnotes-26af0-default-rtdb.firebaseio.com/notes';
+  let debounceNote = {};
+  function fbKeyHrs(k) { return k.replace(/[.#$[\]/]/g, '_'); }
+  async function fbLoadHrs() {
+    try { return (await (await fetch(FB_BASE_HRS + '.json')).json()) || {}; }
+    catch { return {}; }
+  }
+  async function fbSaveHrs(key, text) {
+    try {
+      await fetch(FB_BASE_HRS + '/' + fbKeyHrs(key) + '.json', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(text)
+      });
+    } catch(e) { console.warn('Firebase 儲存失敗', e); }
+  }
+
+  async function initNotesHrs() {
+    const notes = await fbLoadHrs();
+    document.querySelectorAll('.note-editable').forEach(el => {
+      const key = NOTE_PREFIX + el.dataset.key;
+      const fk  = fbKeyHrs(key);
+      if (notes[fk] != null) el.textContent = notes[fk];
       updateEmptyClass(el);
-      showToast();
+      el.addEventListener('input', () => {
+        updateEmptyClass(el);
+        showToast();
+        clearTimeout(debounceNote[key]);
+        debounceNote[key] = setTimeout(() => fbSaveHrs(key, el.textContent), 800);
+      });
     });
-  });
+  }
+  initNotesHrs();
 });
 </script>
 

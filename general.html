@@ -713,32 +713,52 @@ async function checkPw(){
 </footer>
 
 <script>
-  const STORAGE_PREFIX = 'general_case_v3_';
+  const FB_BASE  = 'https://lawfirmnotes-26af0-default-rtdb.firebaseio.com/notes';
+  const NOTE_PFX = 'gen_';
   const toast = document.getElementById('saveToast');
-  let toastTimer;
+  let toastTimer, debounceTimers = {};
 
   function showToast() {
+    toast.textContent = '✓ 備註已儲存（雲端同步）';
     toast.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
   }
-
   function updateEmptyClass(el) {
     el.classList.toggle('empty', el.textContent.trim() === '');
   }
+  function fbKey(k) { return k.replace(/[.#$[\]/]/g, '_'); }
 
-  document.querySelectorAll('.note-editable').forEach(el => {
-    const key = STORAGE_PREFIX + el.dataset.key;
-    const saved = localStorage.getItem(key);
-    if (saved !== null) el.textContent = saved;
-    updateEmptyClass(el);
+  async function fbLoad() {
+    try { return (await (await fetch(FB_BASE + '.json')).json()) || {}; }
+    catch { return {}; }
+  }
+  async function fbSave(key, text) {
+    try {
+      await fetch(FB_BASE + '/' + fbKey(key) + '.json', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(text)
+      });
+    } catch(e) { console.warn('Firebase 儲存失敗', e); }
+  }
 
-    el.addEventListener('input', () => {
-      localStorage.setItem(key, el.textContent);
+  async function initNotes() {
+    const notes = await fbLoad();
+    document.querySelectorAll('.note-editable').forEach(el => {
+      const key = NOTE_PFX + el.dataset.key;
+      const fk  = fbKey(key);
+      if (notes[fk] != null) el.textContent = notes[fk];
       updateEmptyClass(el);
-      showToast();
+      el.addEventListener('input', () => {
+        updateEmptyClass(el);
+        showToast();
+        clearTimeout(debounceTimers[key]);
+        debounceTimers[key] = setTimeout(() => fbSave(key, el.textContent), 800);
+      });
     });
-  });
+  }
+  initNotes();
 </script>
 
 </body>
