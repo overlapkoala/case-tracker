@@ -325,7 +325,7 @@ async function checkPw(){
 <header>
   <div>
     <h1>⚖️ 債清案件追蹤表</h1>
-    <div class="meta">最後更新：2026-06-29　｜　由 Claude 協助管理</div>
+    <div class="meta">最後更新：2026-06-30　｜　由 Claude 協助管理</div>
   </div>
   <div class="stats">
     <div class="stat-box">
@@ -351,17 +351,6 @@ async function checkPw(){
     <div class="card-body">
       <div class="court-item">
         <div class="court-date">
-          <div class="day">14</div>
-          <div class="month">7月</div>
-        </div>
-        <div class="court-info">
-          <div class="cname">張湘棋</div>
-          <div class="ctype">前置調解　｜　下午 3:45　｜　南投地院 調解中心（南投市中興路759號2樓）</div>
-          <div class="caction">115年度司消債調字第48號</div>
-        </div>
-      </div>
-      <div class="court-item">
-        <div class="court-date">
           <div class="day">22</div>
           <div class="month">7月</div>
         </div>
@@ -369,6 +358,28 @@ async function checkPw(){
           <div class="cname">曾俊明</div>
           <div class="ctype">前置調解　｜　上午 10:15　｜　彰化地院員林調解室（員林市員林大道2段1號2樓第5調解室）</div>
           <div class="caction">115年度司消債調字第120號</div>
+        </div>
+      </div>
+      <div class="court-item">
+        <div class="court-date">
+          <div class="day">4</div>
+          <div class="month">8月</div>
+        </div>
+        <div class="court-info">
+          <div class="cname">張湘棋</div>
+          <div class="ctype">前置調解　｜　上午 09:15　｜　南投地院 調解中心（南投市中興路759號2樓）<br><span style="color:#999;font-size:12px;">原訂7/14庭期取消改期</span></div>
+          <div class="caction">115年度司消債調字第48號</div>
+        </div>
+      </div>
+      <div class="court-item">
+        <div class="court-date">
+          <div class="day">5</div>
+          <div class="month">8月</div>
+        </div>
+        <div class="court-info">
+          <div class="cname">許紫喬</div>
+          <div class="ctype">前置調解　｜　上午 10:15　｜　彰化地院員林調解室（員林市員林大道2段1號2樓第5調解室）</div>
+          <div class="caction">115年度司消債調字第145號</div>
         </div>
       </div>
     </div>
@@ -392,22 +403,16 @@ async function checkPw(){
           </li>
         </ul>
       </div>
-      <!-- 等待對方回應 -->
+      <!-- 近期聲請截止 -->
       <div style="margin-bottom:22px;">
         <div style="font-weight:700;color:#d35400;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
-          🟡 等待對方回應
-          <span style="font-weight:400;font-size:12px;color:#888;"></span>
+          🔴 近期聲請截止
         </div>
         <ul class="issue-list">
           <li>
             <div class="issue-name">柯媛齡</div>
-            <div class="issue-desc">6/23今日已出庭南投地院前置調解（司消債調字第52號），結果待確認；若調解不成立，20日內需聲請更生/清算</div>
-            <div class="issue-action" style="background:#fef9e7;color:#d4ac0d;">確認調解結果</div>
-          </li>
-          <li>
-            <div class="issue-name">邱明志</div>
-            <div class="issue-desc">已轉更生聲請（台中地院114年度司消債調字第1047號調解不成立，115/1/21），等候法院受理通知</div>
-            <div class="issue-action" style="background:#f0f6ff;color:#1a5a9a;">等法院消息</div>
+            <div class="issue-desc">115年度司消債調字第52號，6/23調解不成立（南投地院，裕融企業）；依消債條例第153-1條第2項，調解不成立起20日內聲請更生/清算視為原聲請（不另徵費）；截止日：7/13</div>
+            <div class="issue-action" style="background:#fff0f0;color:#c0392b;">7/13前聲請更生/清算</div>
           </li>
         </ul>
       </div>
@@ -486,9 +491,9 @@ async function checkPw(){
           <tr>
             <td><strong>張湘棋</strong></td>
             <td><span class="badge b-mediate">等調解</span></td>
-            <td>調解通知（115/6/22收）</td>
-            <td class="next-step">7/14下午3:45出席南投地院前置調解，攜帶身分證及通知書；若調解不成立20日內聲請更生</td>
-            <td class="note-ok">115年度司消債調字第48號；南投市中興路759號2樓調解中心；相對人：台灣土地銀行等</td>
+            <td>調解通知（115/6/25收，庭期改期）</td>
+            <td class="next-step">8/4 上午09:15 出席南投地院前置調解（南投市中興路759號2樓調解中心），攜帶身分證及通知書；若調解不成立20日內聲請更生</td>
+            <td class="note-ok">115年度司消債調字第48號；南投市中興路759號2樓調解中心；相對人：台灣土地銀行等；原7/14庭期取消改8/4</td>
           </tr>
           <tr>
             <td><strong>賴淑貞</strong></td>
@@ -521,9 +526,9 @@ async function checkPw(){
           <tr>
             <td><strong>蔡淑暖</strong></td>
             <td><span class="badge b-file">等待裁定通過</span></td>
-            <td>陳報(五)（補正已完成）</td>
-            <td class="next-step">等待法院裁定開始更生程序</td>
-            <td class="note-ok">115年度消債更字第42號（彰化地院和股）；調解不成立(114/12/16)；5/27法院要求補件（和潤企業等債務證明）已完成；6/24訊問（已請假）；已送陳報(五)</td>
+            <td>陳報(六)（115/6/30）</td>
+            <td class="next-step">陳報(六)已送出（6/30，補存摺影本及更正委任狀）；等法院裁定開始更生程序</td>
+            <td class="note-ok">115年度消債更字第42號（彰化地院和股）；6/24訊問（吳憶如律師代庭）；6/30送出陳報(六)含存摺影本及更正委任狀</td>
           </tr>
           <tr>
             <td><strong>盧立偉</strong></td>
@@ -544,9 +549,9 @@ async function checkPw(){
           <tr>
             <td><strong>許紫喬</strong></td>
             <td><span class="badge b-mediate">等調解</span></td>
-            <td>聲請狀（115/6/12）</td>
-            <td class="next-step">等調解通知</td>
-            <td class="note-ok">聲請狀已送出</td>
+            <td>調解通知（115/6/25收）</td>
+            <td class="next-step">8/5 上午10:15 出席彰化地院員林前置調解（員林市員林大道2段1號2樓第5調解室），攜帶身分證及通知書；若調解不成立20日內聲請更生</td>
+            <td class="note-ok">115年度司消債調字第145號；彰化地院員林；相對人：聯邦商業銀行等；已繳費1,000元</td>
           </tr>
           <tr>
             <td><strong>陳品丹</strong></td>
@@ -564,10 +569,10 @@ async function checkPw(){
           </tr>
           <tr>
             <td><strong>柯媛齡</strong></td>
-            <td><span class="badge b-mediate">等調解</span></td>
-            <td>6/23已出庭（待確認結果）</td>
-            <td class="next-step">確認6/23調解結果；若調解不成立→20日內聲請更生/清算；若調解成立→辦理後續還款方案</td>
-            <td class="note-ok">115年度司消債調字第52號；南投地院；相對人：裕融企業；6/23下午3:30已出庭，結果待確認</td>
+            <td><span class="badge b-warn">⚠️ 7/13前聲請更生</span></td>
+            <td>調解不成立證明書（115/6/23）</td>
+            <td class="next-step">⚠️ 7/13前（調解不成立起20日內）向南投地院聲請更生或清算（依消債條例第153-1條第2項，視為原聲請，不另徵費）</td>
+            <td class="note-ok">115年度司消債調字第52號；南投地院；相對人：裕融企業；6/23調解不成立，6/25收到不成立證明書</td>
           </tr>
           <!-- 剛開辦 -->
           <tr class="group-row"><td colspan="5">▌ 剛開辦 / 資料收集中</td></tr>
@@ -594,10 +599,10 @@ async function checkPw(){
           </tr>
           <tr>
             <td><strong>黃麗綾</strong></td>
-            <td><span class="badge b-new">剛開辦</span></td>
-            <td>開辦資料收集中</td>
-            <td class="next-step">確認開辦資料齊備後送件聲請前置調解</td>
-            <td class="note-ok">新案件</td>
+            <td><span class="badge b-mediate">等調解</span></td>
+            <td>更生聲請狀（115/7月，苗栗地院）</td>
+            <td class="next-step">更生聲請狀已送出苗栗地院（債務總額228萬9,304元）；等前置調解通知</td>
+            <td class="note-ok">聲請更生程序；苗栗地院；債務總額2,269,304元；聲請狀已備妥並送出</td>
           </tr>
           <!-- 聲請人想撤回 -->
           <tr class="group-row"><td colspan="5">▌ 聲請人想撤回（等待法院駁回或辦理撤回）</td></tr>
@@ -673,7 +678,7 @@ async function checkPw(){
         「莊美滿 陳報二已找到並掃描上傳」
       </div>
       <div style="margin-top:12px">
-        <span class="update-badge">最後更新：2026-06-29（盧立偉調解不成立，等聲請更生）</span>
+        <span class="update-badge">最後更新：2026-06-30（柯媛齡調解不成立7/13前聲請更生；張湘棋庭期改8/4；許紫喬調解通知8/5；蔡淑暖陳報六已送；黃麗綾更生聲請狀已送苗栗地院）</span>
         <span style="color:#aaa;font-size:13px;margin-left:12px;">每次更新後請告知 Claude 修改日期</span>
       </div>
     </div>
@@ -682,7 +687,7 @@ async function checkPw(){
 </main>
 
 <footer>
-  債清案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-06-25
+  債清案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-06-30
 </footer>
 
 <!-- 儲存提示 -->
