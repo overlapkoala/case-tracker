@@ -773,6 +773,25 @@ th.lawyer-th { background: #e8f4fb; color: #1a5a9a; font-size: 13px; min-width: 
 
   init();
 })();
+
+// ── 自動計算截止日倒數天數（每次開頁面就即時算，不依賴 Claude 寫的數字）──
+(function() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  document.querySelectorAll('.alert-title').forEach(el => {
+    const m = el.innerHTML.match(/【(\d{1,2})\/(\d{1,2})\s*前截止/);
+    if (!m) return;
+    const deadline = new Date(today.getFullYear(), +m[1] - 1, +m[2]);
+    if ((today - deadline) > 180 * 86400000) deadline.setFullYear(deadline.getFullYear() + 1);
+    const diff = Math.round((deadline - today) / 86400000);
+    const label = diff > 0 ? `距今僅${diff}天` : diff === 0 ? '今天截止！' : `已逾期${-diff}天`;
+    const color = diff <= 0 ? '#e74c3c' : diff <= 3 ? '#e74c3c' : diff <= 7 ? '#d35400' : '#888';
+    const span = `<span style="color:${color};font-weight:700;">（${label}）</span>`;
+    el.innerHTML = el.innerHTML
+      .replace(/（距今[^）]*）|（今天截止[！!]）|（已逾期[^）]*）/g, '').trimEnd()
+      + ' ' + span;
+  });
+})();
 </script>
 
 </body>
