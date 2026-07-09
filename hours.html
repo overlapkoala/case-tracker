@@ -492,8 +492,8 @@ async function checkPw(){
   <div class="card-body">
     <div style="background:#f0f6ff;border-left:4px solid #2d6a9f;border-radius:0 10px 10px 0;padding:14px 18px;font-size:14px;line-height:1.8;color:#444;">
       <strong style="color:#1a5a9a;">✅ 直接在網頁操作：</strong><br>
-      • <strong>已使用時數</strong>：點選「▼」下拉選單，選擇新的時數，剩餘時數與進度條會自動更新<br>
-      • <strong>備註欄</strong>：直接點擊文字欄位即可輸入，自動儲存在這台電腦<br><br>
+      • <strong>已使用時數</strong>：點選「▼」下拉選單，選擇新的時數，剩餘時數與進度條會自動更新，並即時同步到所有裝置<br>
+      • <strong>備註欄</strong>：直接點擊文字欄位即可輸入，自動同步到所有裝置<br><br>
       <strong style="color:#1a5a9a;">📩 其他更新請告訴 Claude：</strong><br>
       「新增顧問：○○公司，合約X小時，期間X至X」<br>
       「勝佑精密移除未續約，已重新簽約」<br>
@@ -521,7 +521,7 @@ const COMPANY_DATA = {
   '鼎旺營造':    { name: '鼎旺營造股份有限公司',     contract: 20,  initUsed: 3.5, expiry: '115/11/30' },
   '賦活再續':    { name: '賦活再續有限公司',         contract: 6.5, initUsed: 2.5, expiry: '115/12/31' },
   '傑睿悍修俱':  { name: '傑睿悍修俱股份有限公司',  contract: 5,   initUsed: 1,   expiry: '115/12/31' },
-  '京珀彩妝':    { name: '京珀彩妝有限公司',         contract: 10,  initUsed: 5,   expiry: '115/12/31' },
+  '京珀彩妝':    { name: '京珀彩妝有限公司',         contract: 10,  initUsed: 6,   expiry: '115/12/31' },
   '港灣生活家':  { name: '港灣生活家股份有限公司',   contract: 5,   initUsed: 3,   expiry: '116/1/31'  },
   '勝輝實業_續': { name: '勝輝實業有限公司（續）',   contract: 6,   initUsed: 1.5, expiry: '116/1/31'  },
   '開溜有限公司': { name: '開溜有限公司',            contract: 5,   initUsed: 4.5, expiry: '116/2/28'  },
@@ -537,16 +537,30 @@ const DATE_ALERTS = [
 ];
 
 const NOTE_PREFIX = 'legal_hours_v1_';
-const USED_PREFIX = 'legal_used_v1_';
 const LOW_THRESHOLD = 1;  // 剩餘時數 ≤ 此值就顯示警示
+const FB_BASE = 'https://lawfirmnotes-26af0-default-rtdb.firebaseio.com';
 
-// ─── localStorage 讀寫 ────────────────────────────────────
+// ─── 時數快取（頁面載入時從 Firebase 同步，之後保持最新值）─
+const usedCache = {};
+
 function getUsed(key) {
-  const s = localStorage.getItem(USED_PREFIX + key);
-  return s !== null ? parseFloat(s) : COMPANY_DATA[key].initUsed;
+  return key in usedCache ? usedCache[key] : COMPANY_DATA[key].initUsed;
 }
-function setUsed(key, val) {
-  localStorage.setItem(USED_PREFIX + key, String(val));
+
+function fbSafeKey(k) { return k.replace(/[.#$[\]/]/g, '_'); }
+
+async function fbGetHours() {
+  try { return (await (await fetch(FB_BASE + '/hours.json')).json()) || {}; }
+  catch { return {}; }
+}
+async function fbSetHour(key, val) {
+  try {
+    await fetch(FB_BASE + '/hours/' + fbSafeKey(key) + '.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(val)
+    });
+  } catch(e) { console.warn('Firebase 時數儲存失敗', e); }
 }
 
 // ─── 產生選單選項 ─────────────────────────────────────────
@@ -596,11 +610,12 @@ function updateRow(key) {
 
 // ─── 選單變更事件 ─────────────────────────────────────────
 function onUsedChange(key, val) {
-  setUsed(key, parseFloat(val));
+  usedCache[key] = parseFloat(val);
   updateRow(key);
   rebuildAlerts();
   updateStatRemain();
   showToast();
+  fbSetHour(key, usedCache[key]);
 }
 
 // ─── 重建注意事項區塊 ─────────────────────────────────────
@@ -660,10 +675,11 @@ function updateStatRemain() {
 // ─── Toast 提示 ───────────────────────────────────────────
 const toast = document.getElementById('saveToast');
 let toastTimer;
-function showToast() {
+function showToast(msg) {
+  toast.textContent = msg || '✓ 已儲存（雲端同步）';
   toast.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
 // ─── 備註欄 ───────────────────────────────────────────────
@@ -672,51 +688,52 @@ function updateEmptyClass(el) {
 }
 
 // ─── 初始化 ───────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function () {
-  // 建立所有選單並更新列
+document.addEventListener('DOMContentLoaded', async function () {
+  // ① 從 Firebase 載入時數（優先），載入失敗則用 initUsed 預設值
+  const fbHours = await fbGetHours();
+  const keyMap = {};
+  for (const k of Object.keys(COMPANY_DATA)) keyMap[fbSafeKey(k)] = k;
+  for (const [fk, v] of Object.entries(fbHours)) {
+    if (keyMap[fk] !== undefined && v !== null) usedCache[keyMap[fk]] = v;
+  }
+
+  // ② 建立所有選單並更新列
   for (const key of Object.keys(COMPANY_DATA)) {
     buildSelect(key);
     updateRow(key);
   }
-  // 建立警示區塊
   rebuildAlerts();
-  // 更新頁首統計
   updateStatRemain();
 
-  // ─── Firebase 備註同步 ────────────────────────────────────
-  const FB_BASE_HRS = 'https://lawfirmnotes-26af0-default-rtdb.firebaseio.com/notes';
+  // ③ Firebase 備註同步
   let debounceNote = {};
-  function fbKeyHrs(k) { return k.replace(/[.#$[\]/]/g, '_'); }
-  async function fbLoadHrs() {
-    try { return (await (await fetch(FB_BASE_HRS + '.json')).json()) || {}; }
+  async function fbLoadNotes() {
+    try { return (await (await fetch(FB_BASE + '/notes.json')).json()) || {}; }
     catch { return {}; }
   }
-  async function fbSaveHrs(key, text) {
+  async function fbSaveNote(key, text) {
     try {
-      await fetch(FB_BASE_HRS + '/' + fbKeyHrs(key) + '.json', {
+      await fetch(FB_BASE + '/notes/' + fbSafeKey(key) + '.json', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(text)
       });
-    } catch(e) { console.warn('Firebase 儲存失敗', e); }
+    } catch(e) { console.warn('Firebase 備註儲存失敗', e); }
   }
 
-  async function initNotesHrs() {
-    const notes = await fbLoadHrs();
-    document.querySelectorAll('.note-editable').forEach(el => {
-      const key = NOTE_PREFIX + el.dataset.key;
-      const fk  = fbKeyHrs(key);
-      if (notes[fk] != null) el.textContent = notes[fk];
+  const notes = await fbLoadNotes();
+  document.querySelectorAll('.note-editable').forEach(el => {
+    const key = NOTE_PREFIX + el.dataset.key;
+    const fk  = fbSafeKey(key);
+    if (notes[fk] != null) el.textContent = notes[fk];
+    updateEmptyClass(el);
+    el.addEventListener('input', () => {
       updateEmptyClass(el);
-      el.addEventListener('input', () => {
-        updateEmptyClass(el);
-        showToast();
-        clearTimeout(debounceNote[key]);
-        debounceNote[key] = setTimeout(() => fbSaveHrs(key, el.textContent), 800);
-      });
+      showToast();
+      clearTimeout(debounceNote[key]);
+      debounceNote[key] = setTimeout(() => fbSaveNote(key, el.textContent), 800);
     });
-  }
-  initNotesHrs();
+  });
 });
 </script>
 
