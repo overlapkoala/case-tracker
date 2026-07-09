@@ -191,11 +191,11 @@ async function checkPw(){
 <header>
   <div>
     <h1>📋 法律顧問時數追蹤表</h1>
-    <div class="meta">最後更新：2026-06-28　｜　由 Claude 協助管理</div>
+    <div class="meta">最後更新：2026-07-09　｜　由 Claude 協助管理</div>
   </div>
   <div class="stats">
     <div class="stat-box">
-      <div class="num">12</div>
+      <div class="num">14</div>
       <div class="lbl">進行中合約</div>
     </div>
     <div class="stat-box">
@@ -221,7 +221,7 @@ async function checkPw(){
 
 <!-- ── 進行中合約 ── -->
 <div class="card">
-  <div class="card-header blue">📁 進行中合約（12件，依到期日排序）</div>
+  <div class="card-header blue">📁 進行中合約（14件，依到期日排序）</div>
   <div class="card-body" style="padding:0;overflow-x:auto;">
     <table class="hours-table">
       <thead>
@@ -405,6 +405,32 @@ async function checkPw(){
           <td><div class="note-editable" contenteditable="true" data-key="劉政昕">0.5回復</div></td>
         </tr>
 
+        <tr>
+          <td class="left"><div class="company-name">艾歐</div></td>
+          <td><span class="hours-num">20</span></td>
+          <td class="date-cell" style="color:#aaa;">—</td>
+          <td class="date-cell" style="color:#aaa;">—</td>
+          <td><select class="hours-select" id="sel-艾歐" onchange="onUsedChange('艾歐',this.value)"></select></td>
+          <td>
+            <span id="remain-艾歐" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-艾歐" class="progress-fill"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="艾歐"></div></td>
+        </tr>
+
+        <tr>
+          <td class="left"><div class="company-name">偉智</div></td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell" style="color:#aaa;">—</td>
+          <td class="date-cell" style="color:#aaa;">—</td>
+          <td><select class="hours-select" id="sel-偉智" onchange="onUsedChange('偉智',this.value)"></select></td>
+          <td>
+            <span id="remain-偉智" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-偉智" class="progress-fill"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="偉智"></div></td>
+        </tr>
+
       </tbody>
     </table>
   </div>
@@ -474,7 +500,7 @@ async function checkPw(){
       「合約時數追加：三富全球增加5小時」
     </div>
     <div style="margin-top:12px">
-      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-06-28</span>
+      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-07-09</span>
     </div>
   </div>
 </div>
@@ -482,7 +508,7 @@ async function checkPw(){
 </main>
 
 <footer>
-  法律顧問時數追蹤表　｜　由 Claude 協助建立與維護　｜　2026-06-28
+  法律顧問時數追蹤表　｜　由 Claude 協助建立與維護　｜　2026-07-09
 </footer>
 
 <script>
@@ -500,6 +526,8 @@ const COMPANY_DATA = {
   '勝輝實業_續': { name: '勝輝實業有限公司（續）',   contract: 6,   initUsed: 1.5, expiry: '116/1/31'  },
   '開溜有限公司': { name: '開溜有限公司',            contract: 5,   initUsed: 4.5, expiry: '116/2/28'  },
   '劉政昕':      { name: '劉政昕',                   contract: 5,   initUsed: 0.5, expiry: '—'         },
+  '艾歐':        { name: '艾歐',                     contract: 20,  initUsed: 0,   expiry: '—'         },
+  '偉智':        { name: '偉智',                     contract: 5,   initUsed: 0,   expiry: '—'         },
 };
 
 // 到期日提醒（固定，不因時數選單而改變）
