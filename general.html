@@ -213,7 +213,7 @@ async function checkPw(){
 <header>
   <div>
     <h1>⚖️ 一般案件追蹤表</h1>
-    <div class="meta">最後更新：2026-07-10　｜　由 Claude 協助管理（依中華民國法律進度排序）</div>
+    <div class="meta">最後更新：2026-07-12　｜　由 Claude 協助管理（依中華民國法律進度排序）</div>
   </div>
   <div class="stats">
     <div class="stat-box"><div class="num">37</div><div class="lbl">進行中</div></div>
@@ -232,6 +232,13 @@ async function checkPw(){
       <div>
         <div class="alert-title">【7/9 前截止！】高芮棋 — 繳納台中榮民總醫院鑑定費（距今僅9天）</div>
         <div class="alert-desc">115年度員簡調字第130號（損害賠償交通事件），台中榮民總醫院 6/29 來函，請於文到 10 日內（即 7/9 前）繳納勞動能力減損鑑定費 1 萬元。繳費方式：備妥銀行支票（抬頭：台中榮民總醫院）或郵局匯票，連同申請鑑定公文，以掛號寄送台中榮民總醫院醫務企管部醫療事務組。</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon">🔴</div>
+      <div>
+        <div class="alert-title">【7/20 前截止】林文彬 — 家事補正（輔助宣告事件）</div>
+        <div class="alert-desc">115年度家補字第2497號（林文彬與林文杞間輔助宣告事件），台中地院家事法庭115/7/7發函（事務所115/7/10收文），請於通知送達翌日起10日內補正：①相對人林文杞之身心障礙手冊影本或最新診斷證明書；②相對人林文杞之親屬系統表（應填載完整）；③因無法預期鑑定結果，具狀陳報鑑定結果是否符合監護宣告、是否併同聲請監護宣告（若併同聲請，另需補正親屬團體會議紀錄表、財產清冊會同人同意書、戶籍謄本正本等）。截止日約115/7/20（依事務所收文日推算，請與承辦確認實際送達日）。</div>
       </div>
     </div>
   </div>
@@ -615,12 +622,12 @@ async function checkPw(){
           <td><div class="note-editable" contenteditable="true" data-key="史美杰">委託台灣經濟科技發展研究院鑑定；有地檢通知；有監視器影像資料</div></td>
         </tr>
 
-        <tr>
+        <tr class="urgent-row">
           <td><strong>林文彬</strong></td>
-          <td class="td-court">台中地院</td>
-          <td><span class="badge b-new">輔助宣告（待確認）</span></td>
-          <td class="next-step">確認案件目前狀態及庭期</td>
-          <td><div class="note-editable" contenteditable="true" data-key="林文彬_輔助" data-placeholder="點此輸入備註…"></div></td>
+          <td class="td-court">台中地院家事法庭</td>
+          <td><span class="badge b-correct">⚠️ 補正截止（約7/20）</span></td>
+          <td class="next-step urgent-next">⚠️ 約7/20前補正：①相對人林文杞身心障礙手冊/最新診斷證明書 ②親屬系統表 ③陳報鑑定結果是否符合監護宣告、是否併同聲請監護宣告</td>
+          <td><div class="note-editable" contenteditable="true" data-key="林文彬_輔助">115年度家補字第2497號，林文彬與林文杞間輔助宣告事件；台中地院家事法庭115/7/7發函（7/10收文）命補正，因無法預期鑑定結果，如欲併同聲請監護宣告，需另備親屬團體會議紀錄表（三名以上成年親屬）、會同開具財產清冊之人同意書、戶籍謄本正本等</div></td>
         </tr>
 
         <tr>
@@ -633,10 +640,10 @@ async function checkPw(){
 
         <tr>
           <td><strong>誠宇工業</strong></td>
-          <td class="td-court">—</td>
-          <td><span class="badge b-new">待確認（協議中？）</span></td>
-          <td class="next-step">確認曾瑞田協議內容及後續是否需要提起訴訟</td>
-          <td><div class="note-editable" contenteditable="true" data-key="誠宇工業">有曾瑞田協議書；案件類型待確認</div></td>
+          <td class="td-court">台中地院民事庭</td>
+          <td><span class="badge b-trial">一審（審理中，對造已提書狀）</span></td>
+          <td class="next-step">研讀對造7/9提出之民事準備書狀，準備我方回應書狀（爭點：土地污染責任歸屬、租約附記效力、被告是否違約）；等法院後續開庭通知</td>
+          <td><div class="note-editable" contenteditable="true" data-key="誠宇工業">115年度訴字第1064號，給付租金等事件；原告：曾瑞田；被告：誠宇工業有限公司、沈惠滿（兼法定代理人）、柯柏煒、柯坤成（均賴元禧律師受任）；對造(原告)7/9提出民事準備書狀，主張系爭土地交付前無污染、被告未依約提供土壤污染檢測資料構成違約、被告未繳租金證據明確，反駁被告答辯及舉證</div></td>
         </tr>
 
         <tr>
@@ -713,7 +720,7 @@ async function checkPw(){
       「新增開庭：○○○，X月X日 上午X時，○○法院」
     </div>
     <div style="margin-top:12px">
-      <span class="update-badge">最後更新：2026-07-10（本日掃描 01一般案件 資料夾近7日文件；新增王亭宜7/17苗栗地院刑事調查期日；謝安江7/28偵查、高進財起訴狀與強制執行聲請等既有記錄相符，無新增異動）</span>
+      <span class="update-badge">最後更新：2026-07-12（本日掃描 01一般案件 資料夾近7日文件；新增林文彬7/20前家事補正緊急事項（輔助宣告事件）、補齊誠宇工業案件內容（給付租金等事件，對造7/9提出準備書狀）；王亭宜7/17、謝安江7/28、高進財起訴狀與強制執行聲請等既有記錄相符，無新增異動）</span>
     </div>
   </div>
 </div>
@@ -721,7 +728,7 @@ async function checkPw(){
 </main>
 
 <footer>
-  一般案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-07-10
+  一般案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-07-12
 </footer>
 
 <script>
