@@ -191,7 +191,7 @@ async function checkPw(){
 <header>
   <div>
     <h1>📋 法律顧問時數追蹤表</h1>
-    <div class="meta">最後更新：2026-07-09　｜　由 Claude 協助管理</div>
+    <div class="meta">最後更新：2026-07-14　｜　由 Claude 協助管理</div>
   </div>
   <div class="stats">
     <div class="stat-box">
@@ -240,7 +240,7 @@ async function checkPw(){
         <tr>
           <td class="left">
             <div class="company-name">康翔科技股份有限公司</div>
-            <span class="badge expiring">⚠️ 33天後到期</span>
+            <span class="badge expiring" data-expiry="115/7/31">⚠️ 33天後到期</span>
           </td>
           <td><span class="hours-num">15</span></td>
           <td class="date-cell">114/8/1 至 115/7/31</td>
@@ -256,7 +256,7 @@ async function checkPw(){
         <tr>
           <td class="left">
             <div class="company-name">四進有限公司</div>
-            <span class="badge soon">64天後到期</span>
+            <span class="badge soon" data-expiry="115/8/31">64天後到期</span>
           </td>
           <td><span class="hours-num">5</span></td>
           <td class="date-cell">114/9/1 至 115/8/31</td>
@@ -500,7 +500,7 @@ async function checkPw(){
       「合約時數追加：三富全球增加5小時」
     </div>
     <div style="margin-top:12px">
-      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-07-09</span>
+      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-07-14</span>
     </div>
   </div>
 </div>
@@ -508,13 +508,13 @@ async function checkPw(){
 </main>
 
 <footer>
-  法律顧問時數追蹤表　｜　由 Claude 協助建立與維護　｜　2026-07-09
+  法律顧問時數追蹤表　｜　由 Claude 協助建立與維護　｜　2026-07-14
 </footer>
 
 <script>
 // ─── 各公司資料 ───────────────────────────────────────────
 const COMPANY_DATA = {
-  '康翔科技':    { name: '康翔科技股份有限公司',    contract: 15,  initUsed: 0,   expiry: '115/7/31'  },
+  '康翔科技':    { name: '康翔科技股份有限公司',    contract: 15,  initUsed: 0,   expiry: '115/7/31',  alertNote: '⚠️ 請提前確認是否續約' },
   '四進有限公司': { name: '四進有限公司',           contract: 5,   initUsed: 3.3, expiry: '115/8/31'  },
   '三富全球企業': { name: '三富全球企業有限公司',    contract: 5,   initUsed: 4,   expiry: '115/9/30'  },
   '達仁地產':    { name: '達仁地產有限公司',         contract: 5,   initUsed: 4,   expiry: '115/9/30'  },
@@ -529,12 +529,6 @@ const COMPANY_DATA = {
   '艾歐':        { name: '艾歐',                     contract: 20,  initUsed: 0,   expiry: '—'         },
   '偉智':        { name: '偉智',                     contract: 5,   initUsed: 0,   expiry: '—'         },
 };
-
-// 到期日提醒（固定，不因時數選單而改變）
-const DATE_ALERTS = [
-  { days: 33,  warn: false, name: '康翔科技股份有限公司', expiry: '115/7/31', note: '合約15小時　｜　⚠️ 請提前確認是否續約' },
-  { days: 64,  warn: true,  name: '四進有限公司',         expiry: '115/8/31', note: '合約5小時' },
-];
 
 const NOTE_PREFIX = 'legal_hours_v1_';
 const LOW_THRESHOLD = 1;  // 剩餘時數 ≤ 此值就顯示警示
@@ -561,6 +555,32 @@ async function fbSetHour(key, val) {
       body: JSON.stringify(val)
     });
   } catch(e) { console.warn('Firebase 時數儲存失敗', e); }
+}
+
+// ─── 民國日期轉換工具 ─────────────────────────────────────
+function rocDateToDate(roc) {
+  if (!roc || roc === '—') return null;
+  const [y, m, d] = roc.split('/').map(Number);
+  return new Date(y + 1911, m - 1, d);
+}
+function daysUntil(dateStr) {
+  const d = rocDateToDate(dateStr);
+  if (!d) return null;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return Math.round((d - today) / 86400000);
+}
+
+// ─── 更新表格內的到期日 badge ─────────────────────────────
+function updateExpiryBadges() {
+  document.querySelectorAll('[data-expiry]').forEach(el => {
+    const days = daysUntil(el.dataset.expiry);
+    if (days === null) return;
+    const isRed = days <= 30;
+    const prefix = isRed ? '⚠️ ' : '';
+    const text = days < 0 ? `${prefix}已逾期${-days}天` : `${prefix}${days}天後到期`;
+    el.textContent = text;
+    el.className = 'badge ' + (isRed ? 'expiring' : 'soon');
+  });
 }
 
 // ─── 產生選單選項 ─────────────────────────────────────────
@@ -623,17 +643,27 @@ function rebuildAlerts() {
   const container = document.getElementById('alerts-container');
   let html = '';
 
-  // 到期日警示（固定）
-  for (const a of DATE_ALERTS) {
+  // 到期日警示（動態計算）：90天內到期的合約
+  const expiryAlerts = [];
+  for (const [key, data] of Object.entries(COMPANY_DATA)) {
+    const days = daysUntil(data.expiry);
+    if (days !== null && days <= 90) expiryAlerts.push({ data, days });
+  }
+  expiryAlerts.sort((a, b) => a.days - b.days);
+  for (const { data, days } of expiryAlerts) {
+    const isRed = days <= 30;
+    const numStr = days < 0 ? -days : days;
+    const lblStr = days < 0 ? '天已逾期' : '天後到期';
+    const extra = data.alertNote ? `　｜　${data.alertNote}` : '';
     html += `
       <div class="alert-row">
-        <div class="alert-days${a.warn ? ' warn' : ''}">
-          <div class="num">${a.days}</div>
-          <div class="lbl">天後到期</div>
+        <div class="alert-days${isRed ? '' : ' warn'}">
+          <div class="num">${numStr}</div>
+          <div class="lbl">${lblStr}</div>
         </div>
         <div class="alert-info">
-          <div class="aname">${a.name}</div>
-          <div class="adetail">到期日：${a.expiry}　｜　${a.note}</div>
+          <div class="aname">${data.name}</div>
+          <div class="adetail">到期日：${data.expiry}　｜　合約${data.contract}小時${extra}</div>
         </div>
       </div>`;
   }
@@ -703,6 +733,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     updateRow(key);
   }
   rebuildAlerts();
+  updateExpiryBadges();
   updateStatRemain();
 
   // ③ Firebase 備註同步
