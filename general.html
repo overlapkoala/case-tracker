@@ -213,10 +213,10 @@ async function checkPw(){
 <header>
   <div>
     <h1>⚖️ 一般案件追蹤表</h1>
-    <div class="meta">最後更新：2026-07-17　｜　由 Claude 協助管理（依中華民國法律進度排序）</div>
+    <div class="meta">最後更新：2026-07-18　｜　由 Claude 協助管理（依中華民國法律進度排序）</div>
   </div>
   <div class="stats">
-    <div class="stat-box"><div class="num">39</div><div class="lbl">進行中</div></div>
+    <div class="stat-box"><div class="num">41</div><div class="lbl">進行中</div></div>
     <div class="stat-box"><div class="num">36</div><div class="lbl">已結案</div></div>
   </div>
 </header>
@@ -235,24 +235,6 @@ async function checkPw(){
 <div class="card">
   <div class="card-header red">📅 即將到來的開庭 / 期日</div>
   <div class="card-body">
-
-    <div class="court-item">
-      <div class="court-date normal"><div class="day">17</div><div class="month">7月</div></div>
-      <div class="court-info">
-        <div class="cname">朱高邦</div>
-        <div class="ctype">下午 4:20　｜　台中簡易庭（台中市西區自由路1段91號，第二辦公大樓2樓第32法庭）<br>115年度中簡字第959號　撤銷調解（被告：陳怡萃）</div>
-        <span class="ctag civil">民事辯論</span>
-      </div>
-    </div>
-
-    <div class="court-item">
-      <div class="court-date normal"><div class="day">17</div><div class="month">7月</div></div>
-      <div class="court-info">
-        <div class="cname">王亭宜</div>
-        <div class="ctype">上午 11:05　｜　苗栗地院第二法庭（請至111自動報到處）<br>115年度重訴字第3號　毒品危害防制條例等　調查期日<br><span style="color:#999;font-size:12px;">請提出延長限制出境、出海之相關資料到庭</span></div>
-        <span class="ctag criminal">刑事調查</span>
-      </div>
-    </div>
 
     <div class="court-item">
       <div class="court-date normal"><div class="day">28</div><div class="month">7月</div></div>
@@ -337,14 +319,22 @@ async function checkPw(){
       <tbody>
 
         <!-- ══ 民事 ══ -->
-        <tr class="group-row civil"><td colspan="5">▌ 民事（共 18 件，依進度排序）</td></tr>
+        <tr class="group-row civil"><td colspan="5">▌ 民事（共 20 件，依進度排序）</td></tr>
 
         <tr>
           <td><strong>朱高邦</strong></td>
           <td class="td-court">台中簡易庭</td>
-          <td><span class="badge b-debate">言詞辯論（7/17）</span></td>
-          <td class="next-step">7/17 下午4:20 出席辯論庭；辯論後靜候判決（一審判決後20日內可上訴）</td>
+          <td><span class="badge b-debate">言詞辯論終結（7/17）</span></td>
+          <td class="next-step">7/17辯論庭已過；等候一審判決（判決後20日內評估是否上訴）</td>
           <td><div class="note-editable" contenteditable="true" data-key="朱高邦">115中簡字第959號，撤銷調解；對造：陳怡萃；2萬、2萬、1500元代墊，若未開庭駁回免收2萬</div></td>
+        </tr>
+
+        <tr>
+          <td><strong>賴宥澄</strong></td>
+          <td class="td-court">台灣台中地方法院</td>
+          <td><span class="badge b-new">起訴狀已提出</span></td>
+          <td class="next-step">⚠️訴狀區發現115/2/2、2/13兩份民事起訴狀（同一車禍案，請求金額由497,280元追加至722,500元），惟其後無任何後續文件，狀態不明，請律師確認案件是否已送件、有無分案及最新進度</td>
+          <td><div class="note-editable" contenteditable="true" data-key="賴宥澄">原告賴宥澄，被告潘昭雄；114/6/3潘昭雄駕車於北區梅亭路停車格內碰撞賴宥澄之賓士自小客車BCR-6662，致嚴重毀損；請求車輛維修費＋代步車租金；114/7/31已提毀損刑事告訴；民事起訴狀115/2/2版求償497,280元，115/2/13版追加至722,500元</div></td>
         </tr>
 
         <tr>
@@ -484,7 +474,15 @@ async function checkPw(){
         </tr>
 
         <!-- ══ 刑事 ══ -->
-        <tr class="group-row criminal"><td colspan="5">▌ 刑事（共 10 件，依進度排序）</td></tr>
+        <tr class="group-row criminal"><td colspan="5">▌ 刑事（共 11 件，依進度排序）</td></tr>
+
+        <tr>
+          <td><strong>賴文章</strong></td>
+          <td class="td-court">台灣高等檢察署台中檢察分署</td>
+          <td><span class="badge b-invest">再議聲請中</span></td>
+          <td class="next-step">⚠️訴狀區發現115/2/6刑事再議聲請狀，惟其後無任何後續文件，狀態不明，請律師確認再議結果或案件最新進度</td>
+          <td><div class="note-editable" contenteditable="true" data-key="賴文章">聲請人（告訴人）賴文章，被告林聖傑；台中地檢114年度偵字第41118號公然侮辱案經不起訴處分（被告臉書張貼「東光里騙子里長」等語）；115/2/6具狀向台中地檢轉呈高分檢聲請再議，主張原不起訴處分認事用法有誤</div></td>
+        </tr>
 
         <tr>
           <td><strong>劉政昕（潤源泰）</strong></td>
@@ -513,8 +511,8 @@ async function checkPw(){
         <tr>
           <td><strong>王亭宜</strong></td>
           <td class="td-court">苗栗地院刑事庭</td>
-          <td><span class="badge b-invest">調查期日（7/17）</span></td>
-          <td class="next-step">7/17 上午11:05 出席苗栗地院第二法庭調查期日（請至111自動報到處）；提出延長限制出境、出海之相關資料</td>
+          <td><span class="badge b-invest">調查期日已過（7/17）</span></td>
+          <td class="next-step">7/17調查期日已過；等候法院後續通知或下次開庭日期</td>
           <td><div class="note-editable" contenteditable="true" data-key="王亭宜">法扶；115/6/12有開庭；刑事辯護</div></td>
         </tr>
 
@@ -731,7 +729,7 @@ async function checkPw(){
       「新增開庭：○○○，X月X日 上午X時，○○法院」
     </div>
     <div style="margin-top:12px">
-      <span class="update-badge">最後更新：2026-07-17（本日新增：吳金鋒新增第三案「返還費用」訴字第1293號，10/1開庭；江蓉嫻新增家事案「代償債務返還」家訴字第26號，9/18開庭，法院函查資料已回待具狀表示意見；蕭秀春補上案號114年度中簡字第1611號及調查證據聲請狀內容；陳慧蘭7/14補陳報調解筆錄正本；新增楊善雯支付命令案（原結案案件外之新案件，對蕭志明求償110,200元），自已結案移入進行中；移除已過期之7/14李翼林庭期；訴狀區高進財1/28陳報狀因Google Drive檔案鎖定無法讀取，已略過）</span>
+      <span class="update-badge">最後更新：2026-07-18（本日新增：訴狀區發現兩件舊案未曾建檔，已補入——賴宥澄（民事，向潘昭雄求償車禍毀損損害，115/2/2起訴497,280元、115/2/13追加至722,500元，因無後續文件狀態不明待律師確認）、賴文章（刑事，115/2/6對公然侮辱不起訴處分聲請再議，因無後續文件狀態不明待律師確認）；移除已過期之7/17朱高邦辯論庭、王亭宜調查期日並更新其進度為辯論終結／調查期日已過候通知；訴狀區高進財1/28陳報狀因Google Drive檔案鎖定仍無法讀取，已略過）</span>
     </div>
   </div>
 </div>
@@ -739,7 +737,7 @@ async function checkPw(){
 </main>
 
 <footer>
-  一般案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-07-17
+  一般案件追蹤表　｜　由 Claude 協助建立與維護　｜　2026-07-18
 </footer>
 
 <script>
