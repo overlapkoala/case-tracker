@@ -195,7 +195,7 @@ async function checkPw(){
   </div>
   <div class="stats">
     <div class="stat-box">
-      <div class="num">14</div>
+      <div class="num">15</div>
       <div class="lbl">進行中合約</div>
     </div>
     <div class="stat-box">
@@ -221,7 +221,7 @@ async function checkPw(){
 
 <!-- ── 進行中合約 ── -->
 <div class="card">
-  <div class="card-header blue">📁 進行中合約（14件，依到期日排序）</div>
+  <div class="card-header blue">📁 進行中合約（15件，依到期日排序）</div>
   <div class="card-body" style="padding:0;overflow-x:auto;">
     <table class="hours-table">
       <thead>
@@ -406,10 +406,10 @@ async function checkPw(){
         </tr>
 
         <tr>
-          <td class="left"><div class="company-name">艾歐</div></td>
+          <td class="left"><div class="company-name">艾歐整合實境股份有限公司</div></td>
           <td><span class="hours-num">20</span></td>
-          <td class="date-cell" style="color:#aaa;">—</td>
-          <td class="date-cell" style="color:#aaa;">—</td>
+          <td class="date-cell">115/8/1 至 116/7/31</td>
+          <td class="date-cell date-ok">116/7/31</td>
           <td><select class="hours-select" id="sel-艾歐" onchange="onUsedChange('艾歐',this.value)"></select></td>
           <td>
             <span id="remain-艾歐" class="hours-remain"></span>
@@ -419,16 +419,29 @@ async function checkPw(){
         </tr>
 
         <tr>
-          <td class="left"><div class="company-name">偉智</div></td>
+          <td class="left"><div class="company-name">期畔有限公司</div></td>
           <td><span class="hours-num">5</span></td>
-          <td class="date-cell" style="color:#aaa;">—</td>
-          <td class="date-cell" style="color:#aaa;">—</td>
-          <td><select class="hours-select" id="sel-偉智" onchange="onUsedChange('偉智',this.value)"></select></td>
+          <td class="date-cell">115/8/1 至 116/7/31</td>
+          <td class="date-cell date-ok">116/7/31</td>
+          <td><select class="hours-select" id="sel-期畔" onchange="onUsedChange('期畔',this.value)"></select></td>
           <td>
-            <span id="remain-偉智" class="hours-remain"></span>
-            <div class="progress-bar"><div id="bar-偉智" class="progress-fill"></div></div>
+            <span id="remain-期畔" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-期畔" class="progress-fill"></div></div>
           </td>
-          <td><div class="note-editable" contenteditable="true" data-key="偉智"></div></td>
+          <td><div class="note-editable" contenteditable="true" data-key="期畔"></div></td>
+        </tr>
+
+        <tr>
+          <td class="left"><div class="company-name">小壕</div></td>
+          <td><span class="hours-num">5</span></td>
+          <td class="date-cell">115/8/1 至 116/7/31</td>
+          <td class="date-cell date-ok">116/7/31</td>
+          <td><select class="hours-select" id="sel-小壕" onchange="onUsedChange('小壕',this.value)"></select></td>
+          <td>
+            <span id="remain-小壕" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-小壕" class="progress-fill"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="小壕"></div></td>
         </tr>
 
       </tbody>
@@ -500,7 +513,7 @@ async function checkPw(){
       「合約時數追加：三富全球增加5小時」
     </div>
     <div style="margin-top:12px">
-      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-07-30</span>
+      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-07-30（艾歐更名為艾歐整合實境股份有限公司；偉智更名為期畔有限公司；新增顧問小壕；三者合約期間均為115/8/1至116/7/31）</span>
     </div>
   </div>
 </div>
@@ -526,8 +539,9 @@ const COMPANY_DATA = {
   '勝輝實業_續': { name: '勝輝實業有限公司（續）',   contract: 6,   initUsed: 1.5, expiry: '116/1/31'  },
   '開溜有限公司': { name: '開溜有限公司',            contract: 5,   initUsed: 4.5, expiry: '116/2/28'  },
   '劉政昕':      { name: '劉政昕',                   contract: 5,   initUsed: 0.5, expiry: '—'         },
-  '艾歐':        { name: '艾歐',                     contract: 20,  initUsed: 0,   expiry: '—'         },
-  '偉智':        { name: '偉智',                     contract: 5,   initUsed: 0,   expiry: '—'         },
+  '艾歐':        { name: '艾歐整合實境股份有限公司', contract: 20,  initUsed: 0,   expiry: '116/7/31'  },
+  '期畔':        { name: '期畔有限公司',             contract: 5,   initUsed: 0,   expiry: '116/7/31'  },
+  '小壕':        { name: '小壕',                     contract: 5,   initUsed: 0,   expiry: '116/7/31'  },
 };
 
 const NOTE_PREFIX = 'legal_hours_v1_';
