@@ -364,19 +364,6 @@ async function checkPw(){
         </tr>
 
         <tr>
-          <td class="left"><div class="company-name">開溜有限公司</div></td>
-          <td><span class="hours-num">5</span></td>
-          <td class="date-cell">115/3/1 至 116/2/28</td>
-          <td class="date-cell date-ok">116/2/28</td>
-          <td><select class="hours-select" id="sel-開溜有限公司" onchange="onUsedChange('開溜有限公司',this.value)"></select></td>
-          <td>
-            <span id="remain-開溜有限公司" class="hours-remain"></span>
-            <div class="progress-bar"><div id="bar-開溜有限公司" class="progress-fill"></div></div>
-          </td>
-          <td><div class="note-editable" contenteditable="true" data-key="開溜有限公司">0.5回復 0.25回復 2.25審約 1.5審約</div></td>
-        </tr>
-
-        <tr>
           <td class="left"><div class="company-name">劉政昕</div></td>
           <td><span class="hours-num">5</span></td>
           <td class="date-cell" style="color:#aaa;">—</td>
@@ -454,6 +441,19 @@ async function checkPw(){
           <td><div class="note-editable" contenteditable="true" data-key="李鎮宇" data-placeholder="點此輸入備註…"></div></td>
         </tr>
 
+        <tr>
+          <td class="left"><div class="company-name">開溜有限公司</div></td>
+          <td><span class="hours-num">10</span></td>
+          <td class="date-cell">115/11/1 至 116/10/31</td>
+          <td class="date-cell date-ok">116/10/31</td>
+          <td><select class="hours-select" id="sel-開溜有限公司" onchange="onUsedChange('開溜有限公司',this.value)"></select></td>
+          <td>
+            <span id="remain-開溜有限公司" class="hours-remain"></span>
+            <div class="progress-bar"><div id="bar-開溜有限公司" class="progress-fill"></div></div>
+          </td>
+          <td><div class="note-editable" contenteditable="true" data-key="開溜有限公司">【舊約115/3/1-116/2/28已用罄5小時：0.5回復 0.25回復 2.25審約 1.5審約】新約115/11/1起算</div></td>
+        </tr>
+
       </tbody>
     </table>
   </div>
@@ -523,7 +523,7 @@ async function checkPw(){
       「合約時數追加：三富全球增加5小時」
     </div>
     <div style="margin-top:12px">
-      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-11-02（新增顧問李鎮宇，合約時數5小時，已使用3小時，剩餘2小時，合約期間115/9/1至116/8/31）</span>
+      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-11-02（開溜有限公司續約：服務期間改為115/11/1至116/10/31，合約時數由5小時追加5小時，共10小時，已使用時數重新歸零計算，並依到期日移至表格最下方）</span>
     </div>
   </div>
 </div>
@@ -546,7 +546,7 @@ const COMPANY_DATA = {
   '京珀彩妝':    { name: '京珀彩妝有限公司',         contract: 10,  initUsed: 6,   expiry: '115/12/31' },
   '港灣生活家':  { name: '港灣生活家股份有限公司',   contract: 5,   initUsed: 3,   expiry: '116/1/31'  },
   '勝輝實業_續': { name: '勝輝實業有限公司（續）',   contract: 6,   initUsed: 1.5, expiry: '116/1/31'  },
-  '開溜有限公司': { name: '開溜有限公司',            contract: 5,   initUsed: 4.5, expiry: '116/2/28'  },
+  '開溜有限公司': { name: '開溜有限公司',            contract: 10,  initUsed: 0,   expiry: '116/10/31' },
   '劉政昕':      { name: '劉政昕',                   contract: 5,   initUsed: 0.5, expiry: '—'         },
   '艾歐':        { name: '艾歐整合實境股份有限公司', contract: 20,  initUsed: 0,   expiry: '116/7/31'  },
   '期畔':        { name: '期畔有限公司',             contract: 5,   initUsed: 0,   expiry: '116/7/31'  },
