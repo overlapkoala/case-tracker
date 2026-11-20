@@ -195,7 +195,7 @@ async function checkPw(){
   </div>
   <div class="stats">
     <div class="stat-box">
-      <div class="num">15</div>
+      <div class="num">13</div>
       <div class="lbl">進行中合約</div>
     </div>
     <div class="stat-box">
@@ -203,7 +203,7 @@ async function checkPw(){
       <div class="lbl">合計剩餘時數</div>
     </div>
     <div class="stat-box">
-      <div class="num">4</div>
+      <div class="num">6</div>
       <div class="lbl">未續約</div>
     </div>
   </div>
@@ -221,7 +221,7 @@ async function checkPw(){
 
 <!-- ── 進行中合約 ── -->
 <div class="card">
-  <div class="card-header blue">📁 進行中合約（15件，依到期日排序）</div>
+  <div class="card-header blue">📁 進行中合約（13件，依到期日排序）</div>
   <div class="card-body" style="padding:0;overflow-x:auto;">
     <table class="hours-table">
       <thead>
@@ -236,32 +236,6 @@ async function checkPw(){
         </tr>
       </thead>
       <tbody>
-
-        <tr>
-          <td class="left"><div class="company-name">三富全球企業有限公司</div></td>
-          <td><span class="hours-num">5</span></td>
-          <td class="date-cell">114/10/1 至 115/9/30</td>
-          <td class="date-cell date-ok">115/9/30</td>
-          <td><select class="hours-select" id="sel-三富全球企業" onchange="onUsedChange('三富全球企業',this.value)"></select></td>
-          <td>
-            <span id="remain-三富全球企業" class="hours-remain"></span>
-            <div class="progress-bar"><div id="bar-三富全球企業" class="progress-fill"></div></div>
-          </td>
-          <td><div class="note-editable" contenteditable="true" data-key="三富全球企業">0.5問題、2.5書狀、2契約</div></td>
-        </tr>
-
-        <tr>
-          <td class="left"><div class="company-name">達仁地產有限公司</div></td>
-          <td><span class="hours-num">5</span></td>
-          <td class="date-cell">114/10/1 至 115/9/30</td>
-          <td class="date-cell date-ok">115/9/30</td>
-          <td><select class="hours-select" id="sel-達仁地產" onchange="onUsedChange('達仁地產',this.value)"></select></td>
-          <td>
-            <span id="remain-達仁地產" class="hours-remain"></span>
-            <div class="progress-bar"><div id="bar-達仁地產" class="progress-fill"></div></div>
-          </td>
-          <td><div class="note-editable" contenteditable="true" data-key="達仁地產">1.5書狀、2.5契約</div></td>
-        </tr>
 
         <tr>
           <td class="left"><div class="company-name">鼎旺營造股份有限公司</div></td>
@@ -445,7 +419,7 @@ async function checkPw(){
 
 <!-- ── 未續約 ── -->
 <div class="card">
-  <div class="card-header gray">🗂 未續約 / 已到期（4件）</div>
+  <div class="card-header gray">🗂 未續約 / 已到期（6件）</div>
   <div class="card-body" style="padding:0;overflow-x:auto;">
     <table class="hours-table closed-table">
       <thead>
@@ -461,6 +435,24 @@ async function checkPw(){
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td class="left"><div class="company-name">三富全球企業有限公司</div></td>
+          <td>5</td>
+          <td class="date-cell">114/10/1 至 115/9/30</td>
+          <td class="date-cell">115/9/30</td>
+          <td>4</td><td>1</td>
+          <td><div class="note-editable" contenteditable="true" data-key="三富全球企業">0.5問題、2.5書狀、2契約</div></td>
+          <td><span class="closed-tag no-renew">未續約！</span></td>
+        </tr>
+        <tr>
+          <td class="left"><div class="company-name">達仁地產有限公司</div></td>
+          <td>5</td>
+          <td class="date-cell">114/10/1 至 115/9/30</td>
+          <td class="date-cell">115/9/30</td>
+          <td>4</td><td>1</td>
+          <td><div class="note-editable" contenteditable="true" data-key="達仁地產">1.5書狀、2.5契約</div></td>
+          <td><span class="closed-tag no-renew">未續約！</span></td>
+        </tr>
         <tr>
           <td class="left"><div class="company-name">四進有限公司</div></td>
           <td>5</td>
@@ -516,7 +508,7 @@ async function checkPw(){
       「合約時數追加：三富全球增加5小時」
     </div>
     <div style="margin-top:12px">
-      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-11-20（四進有限公司不續約，自「進行中合約」移至「未續約 / 已到期」）</span>
+      <span style="display:inline-block;background:#e8f4ea;color:#27ae60;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;">最後更新：2026-11-20（三富全球企業有限公司、達仁地產有限公司不續約，自「進行中合約」移至「未續約 / 已到期」）</span>
     </div>
   </div>
 </div>
@@ -530,8 +522,6 @@ async function checkPw(){
 <script>
 // ─── 各公司資料 ───────────────────────────────────────────
 const COMPANY_DATA = {
-  '三富全球企業': { name: '三富全球企業有限公司',    contract: 5,   initUsed: 4,   expiry: '115/9/30'  },
-  '達仁地產':    { name: '達仁地產有限公司',         contract: 5,   initUsed: 4,   expiry: '115/9/30'  },
   '鼎旺營造':    { name: '鼎旺營造股份有限公司',     contract: 20,  initUsed: 3.5, expiry: '115/11/30' },
   '賦活再續':    { name: '賦活再續有限公司',         contract: 6.5, initUsed: 2.5, expiry: '115/12/31' },
   '傑睿悍修俱':  { name: '傑睿悍修俱股份有限公司',  contract: 5,   initUsed: 1,   expiry: '115/12/31' },
